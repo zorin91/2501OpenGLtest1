@@ -1,6 +1,12 @@
 ﻿  main.cpp
-LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'C:\Users\Alex\Documents\GitHub\2501OpenGL\OpenGLBookTuts\AntonOpenGLTutorials\Debug\vc120.pdb'; linking object as if no debug info
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(378): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(436): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(441): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(446): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(451): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(456): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(461): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(466): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(471): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
   AntonOpenGLTutorials.vcxproj -> C:\Users\Alex\Documents\GitHub\2501OpenGL\OpenGLBookTuts\AntonOpenGLTutorials\Debug\AntonOpenGLTutorials.exe
   AntonOpenGLTutorials.vcxproj -> C:\Users\Alex\Documents\GitHub\2501OpenGL\OpenGLBookTuts\AntonOpenGLTutorials\Debug\AntonOpenGLTutorials.pdb (Partial PDB)
