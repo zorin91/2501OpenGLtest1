@@ -101,10 +101,14 @@ int main()
 	//enable vsync
 	glfwSwapInterval(1);
 
+
+	//set the cursor mode to GLFW_CURSOR_DISABLED. (GLFW will then take care of all the details of cursor re-centering and offset calculation and providing the application with a virtual cursor position)
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
 	//keep in mind which winding order you are making new shapes in for culling.(note this setting is global, you can turn it off in between draw calls to make some items two sided)
-	//glEnable(GL_CULL_FACE); //cull face
-	//glCullFace(GL_BACK); //cull face back
-	//glFrontFace(GL_CW); //GL_CW for clock-wise ... GL_CCW for counter clock-wise
+	glEnable(GL_CULL_FACE); //cull face
+	glCullFace(GL_BACK); //cull face back
+	glFrontFace(GL_CW); //GL_CW for clock-wise ... GL_CCW for counter clock-wise
 
 
 	//note on order of operations for translations and rotations when using column major matrices(what we use)
@@ -219,14 +223,40 @@ int main()
 	GLfloat interpExamplePoints[] = 
 	{
 		0.0f,0.5f,0.0f,
-		0.5f,-0.5f,0.0f,
-		-0.5f,-0.5f,0.0f
+		0.5f,-0.5f,0.5f,
+		-0.5f,-0.5f,0.5f,
+
+		0.0f,0.5f,0.0f,
+		-0.5f,-0.5f,-0.5f,
+		0.5f,-0.5f,-0.5f,
+
+		0.0f,0.5f,0.0f,
+		0.5f,-0.5f,-0.5f,
+		0.5f,-0.5f,0.5f,
+
+		0.0f,0.5f,0.0f,
+		-0.5f,-0.5f,0.5f,
+		-0.5f,-0.5f,-0.5f
+
 	};
 	GLfloat interpExampleColours[] = 
 	{
 		1.0f,0.0f,0.0f,
 		0.0f,1.0f,0.0f,
-		0.0f,0.0f,1.0f
+		0.0f,0.0f,1.0f,
+
+		1.0f,0.0f,0.0f,
+		0.0f,1.0f,0.0f,
+		0.0f,0.0f,1.0f,
+		
+
+		1.0f,0.0f,0.0f,
+		0.0f,0.0f,1.0f,
+		0.0f,1.0f,0.0f,
+
+		1.0f,0.0f,0.0f,
+		0.0f,0.0f,1.0f,
+		0.0f,1.0f,0.0f
 	};
 
 	//create a vertex buffer object(vbo) to pass on our positions array to the GPU (Define vertex colours example)
@@ -364,14 +394,31 @@ int main()
 	glClearColor(0.5, 0.5, 0.5, 1.0);
 
 	//camera variable setup
-	float cam_speed = 1.0f;
-	float cam_yaw_speed = 20.0f;
+	float cam_speed = 5.0f;
+	float cam_yaw_speed = 50.0f;
+	float cam_pitch_speed = 50.0f;
 	float cam_pos[] = { 0.0f, 0.0f, 2.0f }; //make sure that the z component is not zero otherwise it will be within the near clipping plane(assuming we draw something at the origin here)
 	float cam_yaw = 0.0f;
+	float cam_pitch = 0.0f;
+
+	/*what our view matrix should look like
+
+
+	     --              -- 
+		 | Rx  Ry  Rz -Px |    R = right poiting vector
+	V =  | Ux  Uy  Uz -Py |    U = Up poiting vector
+	     |-Fx -Fy -Fz -Pz |    F = front facing vector
+		 |  0   0   0   1 |    P = Position of camera
+         --              --    
+
+
+	*/
+
 	//creating view matrix for camera
 	mat4 T = translate(identity_mat4(), vec3(-cam_pos[0], -cam_pos[1], -cam_pos[2]));
 	mat4 R = rotate_y_deg(identity_mat4(), -cam_yaw);
-	mat4 view_mat = R * T;
+	mat4 Rx = rotate_x_deg(identity_mat4(), -cam_pitch);
+	mat4 view_mat = Rx  * T;
 	//creating perspective view
 	float near = 0.1f; //near clipping plane distance
 	float far = 100.0f; //far clipping plane distance
@@ -405,9 +452,30 @@ int main()
 	float rotation_speed = 1.0f; //rotate at 1 degree per second
 	float last_position = 0.0f;
 
+	//mouse x and y positions
+	double mouseX, mouseY;
+	double mouseXDisplacement = 0;
+	double mouseYDisplacement = 0;
+
+
 	//drawing loop
 	while (!glfwWindowShouldClose(window))
 	{
+		if (mouseXDisplacement != 0.0 || mouseYDisplacement != 0.0)
+		{
+			glfwSetCursorPos(window, vmode->width / 2, vmode->height / 2);
+		}
+		
+
+		glfwGetCursorPos(window, &mouseX, &mouseY);
+
+		mouseXDisplacement = mouseX - (double)(vmode->width / 2);
+		mouseYDisplacement = mouseY - (double)(vmode->height / 2);
+		if (mouseXDisplacement != 0.0)
+		{
+			printf("MouseXdisplacement:%f\n", mouseXDisplacement);
+		}
+			//printf("MouseX:%f. MouseY:%f\n", mouseX, mouseY);
 
 		//create escape key
 		if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_ESCAPE)) {
@@ -461,6 +529,8 @@ int main()
 			cam_pos[2] += cam_speed * elapsed_seconds;
 			cam_moved = true;
 		}
+
+		/*
 		if (glfwGetKey(window, GLFW_KEY_LEFT))
 		{
 			cam_yaw += cam_yaw_speed * elapsed_seconds;
@@ -471,12 +541,38 @@ int main()
 			cam_yaw -= cam_yaw_speed * elapsed_seconds;
 			cam_moved = true;
 		}
+		*/
+
+		if (mouseXDisplacement > 0.0)
+		{
+			cam_yaw -= mouseXDisplacement;
+			cam_moved = true;
+		}
+
+		if (mouseXDisplacement < 0.0)
+		{
+			cam_yaw -= mouseXDisplacement;
+			cam_moved = true;
+		}
+
+		if (mouseYDisplacement > 0.0)
+		{
+			cam_pitch -= mouseYDisplacement;
+			cam_moved = true;
+		}
+
+		if (mouseYDisplacement < 0.0)
+		{
+			cam_pitch -= mouseYDisplacement;
+			cam_moved = true;
+		}
 		//we update/recalculate our view matrix if one of the previous keys were pressed
 		if (cam_moved)
 		{
 			mat4 T = translate(identity_mat4(), vec3(-cam_pos[0], -cam_pos[1], -cam_pos[2]));
 			mat4 R = rotate_y_deg(identity_mat4(), -cam_yaw);
-			mat4 view_mat = R * T;
+			mat4 Rx = rotate_x_deg(identity_mat4(), -cam_pitch);
+			mat4 view_mat = R * Rx  * T;
 			//pass in updated values to vertex shader
 			glUniformMatrix4fv(view_matrix_location, 1, GL_FALSE, view_mat.m);
 		}
@@ -515,7 +611,7 @@ int main()
 
 		glUseProgram(shader_program_VertexColourExample);
 		glBindVertexArray(vao4);
-		glDrawArrays(GL_TRIANGLES, 0,3);
+		glDrawArrays(GL_TRIANGLES, 0,12);
 
 
 		//update other events like the input handling
