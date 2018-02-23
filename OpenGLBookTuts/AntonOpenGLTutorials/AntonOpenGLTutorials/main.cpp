@@ -608,13 +608,13 @@ int main()
 
 		if (mouseXDisplacement > 0.0)
 		{
-			cam_yaw -= mouseXDisplacement;
+			cam_yaw += mouseXDisplacement;
 			cam_moved = true;
 		}
 
 		if (mouseXDisplacement < 0.0)
 		{
-			cam_yaw -= mouseXDisplacement;
+			cam_yaw += mouseXDisplacement;
 			cam_moved = true;
 		}
 
@@ -626,7 +626,7 @@ int main()
 
 		if (mouseYDisplacement < 0.0)
 		{
-			cam_pitch = mouseYDisplacement;
+			cam_pitch += mouseYDisplacement;
 			cam_moved = true;
 		}
 		//we update/recalculate our view matrix if one of the previous keys were pressed
@@ -668,11 +668,11 @@ int main()
 			view_forward = { -view_mat.m[8],-view_mat.m[9],-view_mat.m[10] };
 			view_forward = normalise(view_forward);
 
-			view_right = { view_mat.m[0],view_mat.m[1],view_mat.m[2] };
-			view_right = normalise(view_right);
+			//view_right = { view_mat.m[0],view_mat.m[1],0.0f };
+			//view_right = normalise(view_right);
 
-			view_up = cross(view_forward, view_right);
-			view_up = normalise(view_up);
+			//view_up = cross(view_forward, view_right);
+			//view_up = normalise(view_up);
 
 			//view_up = { view_mat.m[4],view_mat.m[5],view_mat.m[6] };
 			//view_up = normalise(view_up);
