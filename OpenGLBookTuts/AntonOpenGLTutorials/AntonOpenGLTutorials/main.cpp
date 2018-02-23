@@ -246,8 +246,8 @@ int main()
 		0.0f,0.0f,1.0f,
 
 		1.0f,0.0f,0.0f,
-		0.0f,1.0f,0.0f,
-		0.0f,0.0f,1.0f,
+		1.0f,0.0f,0.0f,
+		1.0f,0.0f,0.0f,
 		
 
 		1.0f,0.0f,0.0f,
@@ -397,15 +397,15 @@ int main()
 	float cam_speed = 5.0f;
 	float cam_yaw_speed = 50.0f;
 	float cam_pitch_speed = 50.0f;
-	float cam_pos[] = { 0.0f, 0.0f, 2.0f }; //make sure that the z component is not zero otherwise it will be within the near clipping plane(assuming we draw something at the origin here)
+	float cam_pos[] = { 0.0f, 0.0f, -4.0f }; //make sure that the z component is not zero otherwise it will be within the near clipping plane(assuming we draw something at the origin here)
 	float cam_yaw = 0.0f;
 	float cam_pitch = 0.0f;
 
 
 	//test setup of our view matrix camera vectors
 	vec3 view_up = vec3(0.0f, 1.0f, 0.0f);
-	vec3 view_forward = vec3(0.0f, 0.0f, -1.0f);
-	vec3 view_right = vec3(1.0f, 0.0f, 0.0f);
+	vec3 view_forward = vec3(0.0f, 0.0f, 1.0f);
+	vec3 view_right = vec3(-1.0f, 0.0f, 0.0f);
 
 
 	//testing using a versor for calculation rotation/orientation
@@ -421,12 +421,14 @@ int main()
 
 	//initializing the orientation versor for our camera
 
-	versor x_axis = quat_from_axis_deg(45.0f, view_up.v[0], view_up.v[1], view_up.v[2]);
-	versor y_axis = quat_from_axis_deg(45.0f, view_right.v[0], view_right.v[1], view_right.v[2]);
-	versor z_axis = quat_from_axis_deg(0.0f, view_forward.v[0], view_forward.v[1], view_forward.v[2]);
+	//versor x_axis = quat_from_axis_deg(45.0f, view_up.v[0], view_up.v[1], view_up.v[2]);
+	//versor y_axis = quat_from_axis_deg(45.0f, view_right.v[0], view_right.v[1], view_right.v[2]);
+	//versor z_axis = quat_from_axis_deg(0.0f, view_forward.v[0], view_forward.v[1], view_forward.v[2]);
 
 	versor cam_orient_versor = quat_from_axis_deg(0.0f, view_forward.v[0], view_forward.v[1], view_forward.v[2]);
 	mat4 testMat = quat_to_mat4(cam_orient_versor);
+
+
 
 	//printf("Versor");
 	//print(R);
@@ -462,6 +464,8 @@ int main()
 		           0.0f,         0.0f,               0.0f, 1.0f
 	);
 
+	mat4 finalRot = testMat * init_view_matrix;
+
 
 
 	//creating view matrix for camera
@@ -469,8 +473,9 @@ int main()
 	//testing using a versor to claculate these two, so we dont need them right now
 	//mat4 R = rotate_y_deg(identity_mat4(), -cam_yaw);
 	//mat4 Rx = rotate_x_deg(identity_mat4(), -cam_pitch);
-	mat4 view_mat = testMat * T;
-
+	//mat4 view_mat = testMat * T ;
+	mat4 view_mat = finalRot * T;
+	print(view_mat);
 
 	//print(T);
 	//printf("translate matrix");
@@ -589,7 +594,12 @@ int main()
 		}
 		if (glfwGetKey(window, GLFW_KEY_S))
 		{
-			cam_pos[2] += cam_speed * elapsed_seconds;
+			//cam_pos[2] += cam_speed * elapsed_seconds;
+			
+			cam_pos[0] += view_forward.v[0] * cam_speed * elapsed_seconds;
+			cam_pos[1] += view_forward.v[1] * cam_speed * elapsed_seconds;
+			cam_pos[2] -= view_forward.v[2] * cam_speed * elapsed_seconds;
+			printf("New componenets. X:%f,Y:%f,Z:%f\n", cam_pos[0], cam_pos[1], cam_pos[2]);
 			cam_moved = true;
 		}
 
@@ -645,7 +655,11 @@ int main()
 
 			versor finalVersor = cam_orient_versorX * cam_orient_versorY;
 
+
+
 			mat4 testMat = quat_to_mat4(finalVersor);
+
+
 
 			mat4 init_view_matrix = mat4(
 				view_right.v[0], view_up.v[0], -view_forward.v[0], 0.0f,
@@ -656,6 +670,8 @@ int main()
 				
 			);
 
+			finalRot = testMat * init_view_matrix;
+
 			
 
 			mat4 T = translate(identity_mat4(), vec3(-cam_pos[0], -cam_pos[1], -cam_pos[2]));
@@ -663,7 +679,8 @@ int main()
 			//mat4 R = rotate_y_deg(identity_mat4(), -cam_yaw);
 			//mat4 Rx = rotate_x_deg(identity_mat4(), -cam_pitch);
 			//mat4 view_mat = R  * T * init_view_matrix;
-			mat4 view_mat = testMat * T;
+			//mat4 view_mat = testMat * T;
+			mat4 view_mat = finalRot * T;
 
 			view_forward = { -view_mat.m[8],-view_mat.m[9],-view_mat.m[10] };
 			view_forward = normalise(view_forward);
@@ -677,15 +694,15 @@ int main()
 			//view_up = { view_mat.m[4],view_mat.m[5],view_mat.m[6] };
 			//view_up = normalise(view_up);
 
-			
+			print(view_mat);
 
-			printf("Right vector:");
-			print(view_right);
-			printf("Up vector:");
-			print(view_up);
-			printf("forward vector:");
-			print(view_forward);
-			printf("\n\n");
+			//printf("Right vector:");
+			//print(view_right);
+			//printf("Up vector:");
+			//print(view_up);
+			//printf("forward vector:");
+			//print(view_forward);
+			//printf("\n\n");
 
 			//view_right = { view_mat.m[0],view_mat.m[1],view_mat.m[2] };
 			//view_right = normalise(view_right);
@@ -697,6 +714,8 @@ int main()
 			//pass in updated values to vertex shader
 			glUniformMatrix4fv(view_matrix_location, 1, GL_FALSE, view_mat.m);
 		}
+
+		
 
 
 
