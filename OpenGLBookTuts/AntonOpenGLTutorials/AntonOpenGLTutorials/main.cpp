@@ -66,6 +66,11 @@ static std::string ParseShader(std::string filepath)
 	return result;
 }
 
+mat4 createCameraViewMatrix()
+{
+	return mat4();
+}
+
 int main()
 {
 	if(!glfwInit())
@@ -106,9 +111,9 @@ int main()
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	//keep in mind which winding order you are making new shapes in for culling.(note this setting is global, you can turn it off in between draw calls to make some items two sided)
-	glEnable(GL_CULL_FACE); //cull face
-	glCullFace(GL_BACK); //cull face back
-	glFrontFace(GL_CW); //GL_CW for clock-wise ... GL_CCW for counter clock-wise
+	//glEnable(GL_CULL_FACE); //cull face
+	//glCullFace(GL_BACK); //cull face back
+	//glFrontFace(GL_CW); //GL_CW for clock-wise ... GL_CCW for counter clock-wise
 
 
 	//note on order of operations for translations and rotations when using column major matrices(what we use)
@@ -124,7 +129,7 @@ int main()
 		1.0f, 0.0f, 0.0f, 0.0f,									//0, 4,  8, 12,
 		0.0f, 1.0f, 0.0f, 0.0f,									//1, 5,  9, 13,
 		0.0f, 0.0f, 1.0f, 0.0f,									//2, 6, 10, 14,
-		0.0f, 0.0f, 0.0f, 1.0f									//3, 7, 11, 15,
+		0.0f, 0.0f, 50.0f, 1.0f									//3, 7, 11, 15,
 	};
 
 
@@ -393,20 +398,29 @@ int main()
 	//sets clear color to grey
 	glClearColor(0.5, 0.5, 0.5, 1.0);
 
+	
+
 	//camera variable setup
 	float cam_speed = 5.0f;
 	float cam_yaw_speed = 50.0f;
 	float cam_pitch_speed = 50.0f;
-	float cam_pos[] = { 0.0f, 0.0f, -4.0f }; //make sure that the z component is not zero otherwise it will be within the near clipping plane(assuming we draw something at the origin here)
+	vec3 cam_pos = { 0.0f, 0.0f, 2.0f }; //make sure that the z component is not zero otherwise it will be within the near clipping plane(assuming we draw something at the origin here)
 	float cam_yaw = 0.0f;
 	float cam_pitch = 0.0f;
 
-
 	//test setup of our view matrix camera vectors
 	vec3 view_up = vec3(0.0f, 1.0f, 0.0f);
-	vec3 view_forward = vec3(0.0f, 0.0f, 1.0f);
-	vec3 view_right = vec3(-1.0f, 0.0f, 0.0f);
+	vec3 view_forward = vec3(0.0f, 0.0f, -1.0f);
+	vec3 view_right = vec3(1.0f, 0.0f, 0.0f);
 
+	
+	//vec3 updated_view_forward = normalise(target - vec3(cam_pos[0], cam_pos[1], cam_pos[2]));
+	//vec3 updated_view_right = normalise(cross(view_up, updated_view_forward));
+	//vec3 updated_view_up = cross(updated_view_forward, updated_view_right);
+	//vec3 updated_cam_pos = {-dot(updated_view_right,vec3(cam_pos[0], cam_pos[1], cam_pos[2])),-dot(updated_view_up,vec3(cam_pos[0], cam_pos[1], cam_pos[2])) ,-dot(updated_view_forward,vec3(cam_pos[0], cam_pos[1], cam_pos[2])) };
+
+
+	//mat4 init_course_book_view_matrix2 = look_at(updated_cam_pos, target, updated_view_up );
 
 	//testing using a versor for calculation rotation/orientation
 	//some important math functions to keep in mind for versors/quaternions (from maths_funcs)
@@ -425,8 +439,8 @@ int main()
 	//versor y_axis = quat_from_axis_deg(45.0f, view_right.v[0], view_right.v[1], view_right.v[2]);
 	//versor z_axis = quat_from_axis_deg(0.0f, view_forward.v[0], view_forward.v[1], view_forward.v[2]);
 
-	versor cam_orient_versor = quat_from_axis_deg(0.0f, view_forward.v[0], view_forward.v[1], view_forward.v[2]);
-	mat4 testMat = quat_to_mat4(cam_orient_versor);
+	//versor cam_orient_versor = quat_from_axis_deg(0.0f, view_forward.v[0], view_forward.v[1], view_forward.v[2]);
+	//mat4 testMat = quat_to_mat4(cam_orient_versor);
 
 
 
@@ -446,36 +460,27 @@ int main()
 	*/
 
 
-	//hard coded view matrix for testing
-	mat4 test_view_mat = 
-	{
-		1.0f, 0.0f, 0.0f,  0.0f,
-		0.0f, 1.0f, 0.0f,  0.0f,
-		0.0f, 0.0f,  1.0f,  0.0f,
-		0.0f, 0.0f,  -2.0f,  1.0f
-	};
+	//view mat calcs using antons math library
+	//using mat4 look_at(const vec3 &cam_pos, vec3 targ_pos, const vec3 &up);
 
-	
+	vec3 target_offset = {0.0f,0.0f,-10.0f};
+	mat4 camera_matrix;
+	//init values
+	vec3 look_at_target = target_offset;
+	camera_matrix = look_at(vec3(cam_pos.v[0], cam_pos.v[1], cam_pos.v[2]), look_at_target, view_up);
 
-	mat4 init_view_matrix = mat4(
-		view_right.v[0], view_up.v[0], -view_forward.v[0], 0.0f,
-		view_right.v[1], view_up.v[1], -view_forward.v[1], 0.0f,
-		view_right.v[2], view_up.v[2], -view_forward.v[2], 0.0f,
-		           0.0f,         0.0f,               0.0f, 1.0f
-	);
-
-	mat4 finalRot = testMat * init_view_matrix;
 
 
 
 	//creating view matrix for camera
-	mat4 T = translate(identity_mat4(), vec3(-cam_pos[0], -cam_pos[1], -cam_pos[2]));
+	//mat4 T = translate(identity_mat4(), vec3(-cam_pos.v[0], -cam_pos.v[1], -cam_pos.v[2]));
 	//testing using a versor to claculate these two, so we dont need them right now
 	//mat4 R = rotate_y_deg(identity_mat4(), -cam_yaw);
 	//mat4 Rx = rotate_x_deg(identity_mat4(), -cam_pitch);
 	//mat4 view_mat = testMat * T ;
-	mat4 view_mat = finalRot * T;
-	print(view_mat);
+	//mat4 view_mat = finalRot * T;
+	mat4 view_mat = camera_matrix ;
+	//print(view_mat);
 
 	//print(T);
 	//printf("translate matrix");
@@ -546,6 +551,11 @@ int main()
 		}
 
 
+		//math test section lol
+		//bug case looking at (-1,0,0) or (1,0,0)
+
+
+
 		//timer for animation (this is probably how we should always do it)
 		static double previous_seconds = glfwGetTime(); //why is it static here? does it refer to this (static storage duration. The storage for the object is allocated when the program begins and deallocated when the program ends. Only one instance of the object exists. All objects declared at namespace scope (including global namespace) have this storage duration, plus those declared with static or extern.)
 		double current_seconds = glfwGetTime();
@@ -564,42 +574,38 @@ int main()
 		bool cam_moved = false;
 		if (glfwGetKey(window, GLFW_KEY_A))
 		{
-			cam_pos[0] -= cam_speed * elapsed_seconds;
+			cam_pos -= view_right *  cam_speed * elapsed_seconds;
 			cam_moved = true;
 		}
 		if (glfwGetKey(window, GLFW_KEY_D))
 		{
-			cam_pos[0] += cam_speed * elapsed_seconds;
+			cam_pos += view_right *  cam_speed * elapsed_seconds;
 			cam_moved = true;
 		}
-		if (glfwGetKey(window, GLFW_KEY_PAGE_UP))
+		if (glfwGetKey(window, GLFW_KEY_Q))
 		{
-			cam_pos[1] += cam_speed * elapsed_seconds;
+			cam_pos += view_up * cam_speed * elapsed_seconds;
 			cam_moved = true;
 		}
-		if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN))
+		if (glfwGetKey(window, GLFW_KEY_E))
 		{
-			cam_pos[1] -= cam_speed * elapsed_seconds;
+			cam_pos -= view_up * cam_speed * elapsed_seconds;
 			cam_moved = true;
 		}
 		if (glfwGetKey(window, GLFW_KEY_W))
 		{
-			print(view_forward);
-			//cam_pos[2] -= cam_speed * elapsed_seconds;
-			cam_pos[0] -= view_forward.v[0] * cam_speed * elapsed_seconds; 
-			cam_pos[1] -= view_forward.v[1] * cam_speed * elapsed_seconds;
-			cam_pos[2] += view_forward.v[2] * cam_speed * elapsed_seconds;
-			printf("New componenets. X:%f,Y:%f,Z:%f\n",cam_pos[0], cam_pos[1], cam_pos[2]);
+			//print(view_forward);
+			//cam_pos.v[2] -= cam_speed * elapsed_seconds;
+			cam_pos += view_forward * cam_speed * elapsed_seconds;
+			//printf("New componenets. X:%f,Y:%f,Z:%f\n",cam_pos.v[0], cam_pos.v[1], cam_pos.v[2]);
 			cam_moved = true;
 		}
 		if (glfwGetKey(window, GLFW_KEY_S))
 		{
-			//cam_pos[2] += cam_speed * elapsed_seconds;
+			//cam_pos.v[2] += cam_speed * elapsed_seconds;
 			
-			cam_pos[0] += view_forward.v[0] * cam_speed * elapsed_seconds;
-			cam_pos[1] += view_forward.v[1] * cam_speed * elapsed_seconds;
-			cam_pos[2] -= view_forward.v[2] * cam_speed * elapsed_seconds;
-			printf("New componenets. X:%f,Y:%f,Z:%f\n", cam_pos[0], cam_pos[1], cam_pos[2]);
+			cam_pos -= view_forward * cam_speed * elapsed_seconds;
+			//printf("New componenets. X:%f,Y:%f,Z:%f\n", cam_pos.v[0], cam_pos.v[1], cam_pos.v[2]);
 			cam_moved = true;
 		}
 
@@ -618,101 +624,166 @@ int main()
 
 		if (mouseXDisplacement > 0.0)
 		{
-			cam_yaw += mouseXDisplacement;
+			cam_yaw -= mouseXDisplacement;
+			if (cam_yaw < 0.0f)
+			{
+				cam_yaw = 360.0f;
+			}
+			
 			cam_moved = true;
 		}
 
 		if (mouseXDisplacement < 0.0)
 		{
-			cam_yaw += mouseXDisplacement;
+			cam_yaw -= mouseXDisplacement;
+			if (cam_yaw > 360.0f)
+			{
+				cam_yaw = 0.0f;
+			}
 			cam_moved = true;
 		}
 
 		if (mouseYDisplacement > 0.0)
 		{
-			cam_pitch += mouseYDisplacement;
+
+			cam_pitch -= mouseYDisplacement;
+
+			if (cam_pitch < -89.0f)
+			{
+				cam_pitch = -89.0f;
+			}
 			cam_moved = true;
+
+
+
 		}
 
 		if (mouseYDisplacement < 0.0)
 		{
-			cam_pitch += mouseYDisplacement;
+
+			cam_pitch -= mouseYDisplacement;
+			if (cam_pitch > 89.0f)
+			{
+				cam_pitch = 89.0f;
+			}
 			cam_moved = true;
+
 		}
 		//we update/recalculate our view matrix if one of the previous keys were pressed
 		if (cam_moved)
 		{
+			//system("CLS");
+
+			//section to test course book camera
+			//default offset {0,0,-2} -> 2 units forward
+			//rotate_vector_by_quaternion(vec3& v, versor& q, vec3& vprime)
+
+			vec3 actual_offset = target_offset;
+			vec3 actual_offset_result;
+			vec3 actual_offset_final;
+
+			//actual_offset = normalise(actual_offset);
+
+			//versor quat_yaw = quat_from_axis_deg(cam_yaw, view_up.v[0], view_up.v[1], view_up.v[2]);
+			versor quat_yaw = quat_from_axis_deg(cam_yaw, 0.0, 1.0, 0.0);
+			quat_yaw = normalise(quat_yaw);
+
+			//rotate_vector_by_quaternion(actual_offset, quat_yaw,actual_offset_result);
+			//printf("result of first quaternion applied to offset: x:%f y:%f z:%f angle used:%f\n", actual_offset_result.v[0], actual_offset_result.v[1], actual_offset_result.v[2], cam_yaw);
+
+		//	printf("yaw angle:%f\n",cam_yaw);
+			//printf("pitch angle:%f\n", cam_pitch);
+			//printf("final offset direction: x:%f y:%f z:%f\n", actual_offset_result.v[0], actual_offset_result.v[1], actual_offset_result.v[2]);
+
+		//	view_forward = actual_offset_result;
+		//	view_forward = normalise(view_forward);
+		//	view_right = cross(view_forward,vec3(0.0f,1.0f,0.0f));
+		//	view_right = normalise(view_right);
+
+			//printf("before forward vector:");
+		//	print(view_forward);
+		//	printf("before right vector:");
+			//print(view_right);
+		
+
+			//versor quat_pitch = quat_from_axis_deg(cam_pitch, view_right.v[0], view_right.v[1], view_right.v[2]);
+			versor quat_pitch = quat_from_axis_deg(cam_pitch, 1.0, 0.0, 0.0);
+			quat_pitch = normalise(quat_pitch);
+
+	
+
+
+			versor result_quat = quat_yaw * quat_pitch;
+
+			//print(result_quat);
+
+			rotate_vector_by_quaternion(actual_offset, result_quat, actual_offset_final);
+			actual_offset_final = normalise(actual_offset_final);
+			printf("test forward vec\n");
+			print(actual_offset_final);
+
+			//rotate_vector_by_quaternion(actual_offset_result, quat_pitch, actual_offset_final);
+
+			printf("result of second quaternion applied to offset: x:%f y:%f z:%f angle used:%f\n", actual_offset_final.v[0], actual_offset_final.v[1], actual_offset_final.v[2], cam_pitch);
+
+			view_forward = actual_offset_final;
+
+			view_forward = normalise(view_forward);
+
+			view_right = cross(view_forward, vec3(0.0f,1.0f,0.0f));
+
+			view_right = normalise(view_right);
+
+			//vec3 test_up = cross(view_right, view_forward);
+			//test_up = normalise(test_up);
+			//printf("test up vector:");
+			//print(test_up);
+
+			printf("forward vector:");
+			print(view_forward);
+			printf("right vector:");
+			print(view_right);
+
+			view_up = cross(view_right,view_forward);
+			view_up = normalise(view_up);
+
+
+			//printf("forward vector:");
+			//print(view_forward);
+			//printf("right vector:");
+			//print(view_right);
+			printf("up vector:");
+			print(view_up);
+			printf("-----------------------------------------------------------------\n");
+
+			//vec3 look_at_target = actual_offset_result + cam_pos;
+			vec3 look_at_target = actual_offset_final + cam_pos;
+			printf("final offset value:");
+			print(actual_offset_final);
+
+			camera_matrix = look_at(vec3(cam_pos.v[0], cam_pos.v[1], cam_pos.v[2]), look_at_target, view_up);
+			//camera_matrix = look_at(vec3(cam_pos.v[0], cam_pos.v[1], cam_pos.v[2]), look_at_target, vec3(0.0,1.0,0.0));
 
 			//initializing the orientation versor for our camera
 			//lets try the cross product of our two vectors in one versor
 			//vec3 testVector = cross()
 
 			//
-			versor cam_orient_versorX = quat_from_axis_deg(cam_yaw, view_up.v[0], view_up.v[1], view_up.v[2]);
 
-
-			versor cam_orient_versorY = quat_from_axis_deg(cam_pitch, view_right.v[0], view_right.v[1], view_right.v[2]);
-
-			versor finalVersor = cam_orient_versorX * cam_orient_versorY;
-
-
-
-			mat4 testMat = quat_to_mat4(finalVersor);
-
-
-
-			mat4 init_view_matrix = mat4(
-				view_right.v[0], view_up.v[0], -view_forward.v[0], 0.0f,
-				view_right.v[1], view_up.v[1], -view_forward.v[1], 0.0f,
-				view_right.v[2], view_up.v[2], -view_forward.v[2], 0.0f,
-				0.0f, 0.0f, 0.0f, 1.0f
-
-				
-			);
-
-			finalRot = testMat * init_view_matrix;
-
-			
-
-			mat4 T = translate(identity_mat4(), vec3(-cam_pos[0], -cam_pos[1], -cam_pos[2]));
 			
 			//mat4 R = rotate_y_deg(identity_mat4(), -cam_yaw);
 			//mat4 Rx = rotate_x_deg(identity_mat4(), -cam_pitch);
 			//mat4 view_mat = R  * T * init_view_matrix;
 			//mat4 view_mat = testMat * T;
-			mat4 view_mat = finalRot * T;
+			//mat4 view_mat = finalRot * T;
+			mat4 view_mat = camera_matrix;
+			//print(view_mat);
 
-			view_forward = { -view_mat.m[8],-view_mat.m[9],-view_mat.m[10] };
-			view_forward = normalise(view_forward);
-
-			//view_right = { view_mat.m[0],view_mat.m[1],0.0f };
-			//view_right = normalise(view_right);
-
-			//view_up = cross(view_forward, view_right);
-			//view_up = normalise(view_up);
-
-			//view_up = { view_mat.m[4],view_mat.m[5],view_mat.m[6] };
-			//view_up = normalise(view_up);
-
-			print(view_mat);
-
-			//printf("Right vector:");
-			//print(view_right);
-			//printf("Up vector:");
-			//print(view_up);
-			//printf("forward vector:");
-			//print(view_forward);
-			//printf("\n\n");
-
-			//view_right = { view_mat.m[0],view_mat.m[1],view_mat.m[2] };
-			//view_right = normalise(view_right);
-			//attempt to calulate new forward
-			//vec3 newUp = {view_mat.m[4],view_mat.m[5],view_mat.m[6] };
-			//newUp = normalise(newUp);
-			//print(newUp);
 
 			//pass in updated values to vertex shader
 			glUniformMatrix4fv(view_matrix_location, 1, GL_FALSE, view_mat.m);
+
+			
 		}
 
 		

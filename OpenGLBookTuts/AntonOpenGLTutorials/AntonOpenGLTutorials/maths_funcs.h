@@ -145,6 +145,7 @@ mat4 perspective(float fovy, float aspect, float near, float far);
 // quaternion functions
 versor quat_from_axis_rad(float radians, float x, float y, float z);
 versor quat_from_axis_deg(float degrees, float x, float y, float z);
+void rotate_vector_by_quaternion(vec3& v, versor& q, vec3& vprime);
 mat4 quat_to_mat4(const versor &q);
 float dot(const versor &q, const versor &r);
 versor slerp(const versor &q, const versor &r);

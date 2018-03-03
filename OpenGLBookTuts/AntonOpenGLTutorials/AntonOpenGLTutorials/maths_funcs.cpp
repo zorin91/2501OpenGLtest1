@@ -620,6 +620,19 @@ float dot(const versor &q, const versor &r) {
 	return q.q[0] * r.q[0] + q.q[1] * r.q[1] + q.q[2] * r.q[2] + q.q[3] * r.q[3];
 }
 
+void rotate_vector_by_quaternion( vec3& v, versor& q, vec3& vprime)
+{
+	// Extract the vector part of the quaternion
+	vec3 u(q.q[1], q.q[2], q.q[3]);
+
+	// Extract the scalar part of the quaternion
+	float s = q.q[0];
+
+	// Do the math
+	vprime = u * (2.0f * dot(u, v)) + v * (s*s - dot(u, u)) + cross(u, v) * 2.0f * s;
+
+}
+
 versor slerp(versor &q, versor &r, float t) {
 	// angle between q0-q1
 	float cos_half_theta = dot(q, r);
