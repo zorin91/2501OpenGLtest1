@@ -1,14 +1,14 @@
 ﻿  main.cpp
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(493): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(577): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(582): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(587): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(592): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(599): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(607): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(627): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(638): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(649): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(664): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(606): warning C4305: 'initializing': truncation from 'double' to 'float'
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(703): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(708): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(713): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(718): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(725): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(733): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(753): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(764): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(775): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(790): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
   AntonOpenGLTutorials.vcxproj -> C:\Users\Alex\Documents\GitHub\2501OpenGL\OpenGLBookTuts\AntonOpenGLTutorials\Debug\AntonOpenGLTutorials.exe
   AntonOpenGLTutorials.vcxproj -> C:\Users\Alex\Documents\GitHub\2501OpenGL\OpenGLBookTuts\AntonOpenGLTutorials\Debug\AntonOpenGLTutorials.pdb (Partial PDB)

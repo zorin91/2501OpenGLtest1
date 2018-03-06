@@ -16,6 +16,9 @@
     <Filter Include="shaders">
       <UniqueIdentifier>{31b22e0a-1a10-4701-8035-241c6490eedc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\test">
+      <UniqueIdentifier>{4960d56d-9790-45a6-a366-223803b75732}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -44,10 +47,24 @@
     <None Include="vertexColoursExample.frag">
       <Filter>shaders</Filter>
     </None>
+    <None Include="skybox_shader.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="skybox_shader.vert">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="maths_funcs.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\external resources\skybox\bkg1_left2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

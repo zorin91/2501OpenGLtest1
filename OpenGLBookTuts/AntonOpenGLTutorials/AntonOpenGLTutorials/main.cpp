@@ -1,4 +1,5 @@
-#define _CRT_SECURE_NO_WARNINGS
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -17,36 +18,7 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
-bool restart_gl_log()
-{
-	FILE* file = fopen(GL_LOG_FILE, "w");
-	if (!file)
-	{
-		fprintf(stderr, "Error: could not open GL_LOG_FILE log file %s for writing\n", GL_LOG_FILE);
-		return false;
-	}
-	time_t now = time(NULL);
-	char* date = ctime(&now);
-	fprintf(file, "GL_LOG_FILE log. local time %s\n", date);
-	fclose(file);
-	return true;
-}
 
-bool gl_log(const char* message, ...)
-{
-	va_list argptr;
-	FILE* file = fopen(GL_LOG_FILE, "a");
-	if (!file)
-	{
-		fprintf(stderr, "Error: could not open GL_LOG_FILE log file %s for appending\n", GL_LOG_FILE);
-		return false;
-	}
-	va_start(argptr, message);
-	vfprintf(file, message, argptr);
-	va_end(argptr);
-	fclose(file);
-	return true;
-}
 
 static std::string ParseShader(std::string filepath)
 {
@@ -71,6 +43,69 @@ mat4 createCameraViewMatrix()
 	return mat4();
 }
 
+bool load_cube_map_side(
+	GLuint texture, GLenum side_target, const char* file_name) {
+	glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+
+	int x, y, n;
+	int force_channels = 4;
+	unsigned char*  image_data = stbi_load(
+		file_name, &x, &y, &n, force_channels);
+	if (!image_data) {
+		fprintf(stderr, "ERROR: could not load %s\n", file_name);
+		return false;
+	}
+	// non-power-of-2 dimensions check
+	if ((x & (x - 1)) != 0 || (y & (y - 1)) != 0) {
+		fprintf(stderr,
+			"WARNING: image %s is not power-of-2 dimensions\n",
+			file_name);
+	}
+
+	// copy image data into 'target' side of cube map
+	glTexImage2D(
+		side_target,
+		0,
+		GL_RGBA,
+		x,
+		y,
+		0,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		image_data);
+	free(image_data);
+	return true;
+}
+
+void create_cube_map(
+	const char* front,
+	const char* back,
+	const char* top,
+	const char* bottom,
+	const char* left,
+	const char* right,
+	GLuint* skybox) {
+	// generate a cube-map texture to hold all the sides
+	glActiveTexture(GL_TEXTURE0);
+	glGenTextures(1, skybox);
+
+	// load each image and copy into a side of the cube-map texture
+	load_cube_map_side(*skybox, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, front);
+	load_cube_map_side(*skybox, GL_TEXTURE_CUBE_MAP_POSITIVE_Z, back);
+	load_cube_map_side(*skybox, GL_TEXTURE_CUBE_MAP_POSITIVE_Y, top);
+	load_cube_map_side(*skybox, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, bottom);
+	load_cube_map_side(*skybox, GL_TEXTURE_CUBE_MAP_NEGATIVE_X, left);
+	load_cube_map_side(*skybox, GL_TEXTURE_CUBE_MAP_POSITIVE_X, right);
+	// format cube map texture
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
+#define RELPATH "../../external resources/skybox/"
+
 int main()
 {
 	if(!glfwInit())
@@ -82,7 +117,7 @@ int main()
 	GLFWmonitor* mon = glfwGetPrimaryMonitor();
 	const GLFWvidmode* vmode = glfwGetVideoMode(mon);
 	
-	GLFWwindow* window = glfwCreateWindow(vmode->width, vmode->height, "Hello Triangle", mon, NULL);
+	GLFWwindow* window = glfwCreateWindow(vmode->width , vmode->height , "Hello Triangle", mon, NULL);
 	if (!window)
 	{
 		fprintf(stderr, "Error: could not open a window\n");
@@ -129,10 +164,63 @@ int main()
 		1.0f, 0.0f, 0.0f, 0.0f,									//0, 4,  8, 12,
 		0.0f, 1.0f, 0.0f, 0.0f,									//1, 5,  9, 13,
 		0.0f, 0.0f, 1.0f, 0.0f,									//2, 6, 10, 14,
-		0.0f, 0.0f, 50.0f, 1.0f									//3, 7, 11, 15,
+		0.0f, 0.0f, -4.0f, 1.0f									//3, 7, 11, 15,
 	};
 
+	float points_skybox[] = {
+		-10.0f,  10.0f, -10.0f,
+		-10.0f, -10.0f, -10.0f,
+		10.0f, -10.0f, -10.0f,
+		10.0f, -10.0f, -10.0f,
+		10.0f,  10.0f, -10.0f,
+		-10.0f,  10.0f, -10.0f,
 
+		-10.0f, -10.0f,  10.0f,
+		-10.0f, -10.0f, -10.0f,
+		-10.0f,  10.0f, -10.0f,
+		-10.0f,  10.0f, -10.0f,
+		-10.0f,  10.0f,  10.0f,
+		-10.0f, -10.0f,  10.0f,
+
+		10.0f, -10.0f, -10.0f,
+		10.0f, -10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f, -10.0f,
+		10.0f, -10.0f, -10.0f,
+
+		-10.0f, -10.0f,  10.0f,
+		-10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f, -10.0f,  10.0f,
+		-10.0f, -10.0f,  10.0f,
+
+		-10.0f,  10.0f, -10.0f,
+		10.0f,  10.0f, -10.0f,
+		10.0f,  10.0f,  10.0f,
+		10.0f,  10.0f,  10.0f,
+		-10.0f,  10.0f,  10.0f,
+		-10.0f,  10.0f, -10.0f,
+
+		-10.0f, -10.0f, -10.0f,
+		-10.0f, -10.0f,  10.0f,
+		10.0f, -10.0f, -10.0f,
+		10.0f, -10.0f, -10.0f,
+		-10.0f, -10.0f,  10.0f,
+		10.0f, -10.0f,  10.0f
+	};
+	GLuint vbo_sky;
+	glGenBuffers(1, &vbo_sky);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_sky);
+	glBufferData(GL_ARRAY_BUFFER, 3 * 36 * sizeof(float), &points_skybox, GL_STATIC_DRAW);
+
+	GLuint vao_sky;
+	glGenVertexArrays(1, &vao_sky);
+	glBindVertexArray(vao_sky);
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo_sky);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
 
 
@@ -290,6 +378,31 @@ int main()
 	glEnableVertexAttribArray(1);
 
 
+
+	//skybox shader
+	//parse vertex shader from external file
+	std::string skybox_vertex_source = ParseShader("skybox_shader.vert");
+	const GLchar * skybox_vertex_shader = (const GLchar *)skybox_vertex_source.c_str();
+
+	//parse fragment shader from external file
+	std::string skybox_fragment_source = ParseShader("skybox_shader.frag");
+	const GLchar * skybox_fragment_shader = (const GLchar *)skybox_fragment_source.c_str();
+
+	//compile the vertex shader
+	GLuint sky_vs = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(sky_vs, 1, &skybox_vertex_shader, NULL);
+	glCompileShader(sky_vs);
+
+	//compile the framgent shader
+	GLuint sky_fs = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(sky_fs, 1, &skybox_fragment_shader, NULL);
+	glCompileShader(sky_fs);
+
+	//using both the compiled vertex shader and compiled framgent shader we create a single, executable GPU shader program
+	GLuint skybox_program = glCreateProgram();
+	glAttachShader(skybox_program, sky_fs);
+	glAttachShader(skybox_program, sky_vs);
+	glLinkProgram(skybox_program);
 
 
 
@@ -510,13 +623,21 @@ int main()
 
 
 
-	//intialize the values of our projection and view matrices in the vertex shader
+	//intialize the values of our projection and view matrices in the entity vertex shader
 	int view_matrix_location = glGetUniformLocation(shader_program_VertexColourExample, "view");
 	glUseProgram(shader_program_VertexColourExample);
 	glUniformMatrix4fv(view_matrix_location, 1, GL_FALSE, view_mat.m);
 	int projection_matrix_location = glGetUniformLocation(shader_program_VertexColourExample, "proj");
 	glUseProgram(shader_program_VertexColourExample);
 	glUniformMatrix4fv(projection_matrix_location, 1, GL_FALSE, proj_mat);
+
+	//intialize the values of our projection and view matrices in the skybox vertex shader
+	int skybox_view_matrix_location = glGetUniformLocation(skybox_program, "view");
+	glUseProgram(skybox_program);
+	glUniformMatrix4fv(skybox_view_matrix_location, 1, GL_FALSE, view_mat.m);
+	int skybox_projection_matrix_location = glGetUniformLocation(skybox_program, "proj");
+	glUseProgram(skybox_program);
+	glUniformMatrix4fv(skybox_projection_matrix_location, 1, GL_FALSE, proj_mat);
 	
 
 	float speed = 1.0f; //move at 1 unit per second
@@ -529,6 +650,11 @@ int main()
 	double mouseXDisplacement = 0;
 	double mouseYDisplacement = 0;
 
+	GLuint skybox = 0;
+
+	create_cube_map(RELPATH"bkg1_back6.png", RELPATH"bkg1_front5.png", RELPATH"bkg1_top3.png", RELPATH"bkg1_bottom4.png", RELPATH"bkg1_left2.png", RELPATH"bkg1_right1.png",&skybox);
+
+	int tex_loc = glGetUniformLocation(skybox_program, "cube_texture");
 
 	//drawing loop
 	while (!glfwWindowShouldClose(window))
@@ -739,10 +865,10 @@ int main()
 			//printf("test up vector:");
 			//print(test_up);
 
-			printf("forward vector:");
-			print(view_forward);
-			printf("right vector:");
-			print(view_right);
+		//	printf("forward vector:");
+		//	print(view_forward);
+		//	printf("right vector:");
+		//	print(view_right);
 
 			view_up = cross(view_right,view_forward);
 			view_up = normalise(view_up);
@@ -780,13 +906,27 @@ int main()
 			//print(view_mat);
 
 
-			//pass in updated values to vertex shader
+			//pass in updated values to entity vertex shader
+			glUseProgram(shader_program_VertexColourExample);
 			glUniformMatrix4fv(view_matrix_location, 1, GL_FALSE, view_mat.m);
+
+			//pass in updated values to skybox vertex shader
+			glUseProgram(skybox_program);
+			glUniformMatrix4fv(skybox_view_matrix_location, 1, GL_FALSE, view_mat.m);
 
 			
 		}
 
-		
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glDepthMask(GL_FALSE);
+		glUseProgram(skybox_program);
+		glUniform1i(tex_loc, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
+		glBindVertexArray(vao_sky);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+		glDepthMask(GL_TRUE);
 
 
 
@@ -799,11 +939,12 @@ int main()
 		//matrix[9] = -sin(last_position * 180 / 3.14);
 		//matrix[10] = cos(last_position * 180 / 3.14);
 
+
 		glUseProgram(shader_program_VertexColourExample);
 		glUniformMatrix4fv(matrix_location, 1, GL_FALSE, matrix);
 
 		//wipe the drawing surface clear	
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
 
 		//glUseProgram(shader_program_purple);
 		//glBindVertexArray(vao);
