@@ -53,6 +53,12 @@
     <None Include="skybox_shader.vert">
       <Filter>shaders</Filter>
     </None>
+    <None Include="ship_shader.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="ship_shader.vert">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="maths_funcs.h">

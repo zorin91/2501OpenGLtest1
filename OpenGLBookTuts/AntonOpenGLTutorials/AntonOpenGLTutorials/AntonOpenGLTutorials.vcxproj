@@ -127,6 +127,8 @@
     <ClCompile Include="maths_funcs.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ship_shader.frag" />
+    <None Include="ship_shader.vert" />
     <None Include="skybox_shader.frag" />
     <None Include="skybox_shader.vert" />
     <None Include="test.frag" />

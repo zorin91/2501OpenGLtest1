@@ -612,13 +612,8 @@ int main()
 	float Sz = -(far + near) / (far - near);
 	float Pz = -(2.0f * far * near) / (far - near);
 	//create the perspective matrix
-	float proj_mat[] = 
-	{
-		  Sx, 0.0f, 0.0f,  0.0f,
-		0.0f,   Sy, 0.0f,  0.0f,
-		0.0f, 0.0f,   Sz, -1.0f,
-		0.0f, 0.0f,   Pz,  0.0f
-	};
+	float proj_mat[] = { Sx, 0.0f, 0.0f, 0.0f, 0.0f, Sy, 0.0f, 0.0f, 0.0f, 0.0f, Sz, -1.0f, 0.0f, 0.0f, Pz, 0.0f };
+	mat4 proj_mat_ray = mat4( Sx, 0.0f, 0.0f,  0.0f, 0.0f,   Sy, 0.0f,  0.0f, 0.0f, 0.0f,   Sz, -1.0f, 0.0f, 0.0f,   Pz,  0.0f);
 
 
 
@@ -659,6 +654,7 @@ int main()
 	//drawing loop
 	while (!glfwWindowShouldClose(window))
 	{
+		//resets mouse position to center of screen and checks for mouse movement
 		if (mouseXDisplacement != 0.0 || mouseYDisplacement != 0.0)
 		{
 			glfwSetCursorPos(window, vmode->width / 2, vmode->height / 2);
@@ -795,9 +791,34 @@ int main()
 			cam_moved = true;
 
 		}
+
+		//ray casting
+		if (glfwGetKey(window, GLFW_KEY_SPACE))
+		{
+			float ray_mouse_x = (2.0f * mouseX) / vmode->width - 1.0f;
+			float ray_mouse_y = 1.0f - (2.0f * mouseY) / vmode->height;
+			float ray_mouse_z = 1.0f;
+			vec3 ray_nds = vec3(ray_mouse_x, ray_mouse_y, ray_mouse_z);
+			vec4 ray_clip = vec4(ray_nds.v[0], ray_nds.v[1], -1.0f, 1.0f);
+			vec4 ray_eye = inverse(proj_mat_ray) * ray_clip;
+			ray_eye = vec4(ray_eye.v[0], ray_eye.v[1], -1.0, 0.0);
+			vec4 temp = (inverse(view_mat) * ray_eye);
+			vec3 ray_wor = vec3(temp.v[0], temp.v[1], temp.v[2]);
+			ray_wor = normalise(ray_wor);
+			printf("RAY: ");
+			print(ray_wor);
+		}
+
+
+
 		//we update/recalculate our view matrix if one of the previous keys were pressed
 		if (cam_moved)
 		{
+
+			
+
+
+
 			//system("CLS");
 
 			//section to test course book camera
