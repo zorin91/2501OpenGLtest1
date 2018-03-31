@@ -104,6 +104,39 @@ void create_cube_map(
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
+//code taken from https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection
+//my own notes added
+bool solveQuadratic(const float &a, const float &b, const float &c, float &x0, float &x1)
+{
+	//calculate discriminant to know how many intersections we have.
+	//if discr > 0 then 2 intersections (typical case)
+	//if discr == 0 then 1 intersection (case when the intersection is just on the edge of the sphere)
+	//if discr < 0 then no intersections( complete miss by the ray)
+	float discr = b * b - 4 * a * c;
+	if (discr < 0)
+	{
+		return false;
+	}
+	else if (discr == 0)
+	{
+		x0 = x1 = -0.5 * b / a;
+	}
+	else 
+	{
+		float q = (b > 0) ?
+			-0.5 * (b + sqrt(discr)) :
+			-0.5 * (b - sqrt(discr));
+		x0 = q / a;
+		x1 = c / q;
+	}
+	if (x0 > x1)
+	{
+		std::swap(x0, x1);
+	}
+
+	return true;
+}
+
 #define RELPATH "../../external resources/skybox/"
 
 int main()
@@ -158,13 +191,18 @@ int main()
 	//in short, order matters!
 
 
+	float enemy_ship_z = -4.0f;
+	float enemy_ship_x = 0.0f;
+	float enemy_ship_y = 0.0f;
+
+
 	//matrix for translation demo             //when using a 1d array as a 4x4 matrix this is the order of elements
 	float matrix[] = 
 	{           
 		1.0f, 0.0f, 0.0f, 0.0f,									//0, 4,  8, 12,
 		0.0f, 1.0f, 0.0f, 0.0f,									//1, 5,  9, 13,
 		0.0f, 0.0f, 1.0f, 0.0f,									//2, 6, 10, 14,
-		0.0f, 0.0f, -4.0f, 1.0f									//3, 7, 11, 15,
+		enemy_ship_x, enemy_ship_y, enemy_ship_z, 1.0f									//3, 7, 11, 15,
 	};
 
 	float points_skybox[] = {
@@ -511,12 +549,11 @@ int main()
 	//sets clear color to grey
 	glClearColor(0.5, 0.5, 0.5, 1.0);
 
-	
+	//sphere ray tracing collision variables
+	float sphere_radius = 1.0f;
 
 	//camera variable setup
 	float cam_speed = 5.0f;
-	float cam_yaw_speed = 50.0f;
-	float cam_pitch_speed = 50.0f;
 	vec3 cam_pos = { 0.0f, 0.0f, 2.0f }; //make sure that the z component is not zero otherwise it will be within the near clipping plane(assuming we draw something at the origin here)
 	float cam_yaw = 0.0f;
 	float cam_pitch = 0.0f;
@@ -792,9 +829,11 @@ int main()
 
 		}
 
-		//ray casting
+		//ray casting (dont need commented section since we are always facing forward direction)
 		if (glfwGetKey(window, GLFW_KEY_SPACE))
 		{
+
+			/*
 			float ray_mouse_x = (2.0f * mouseX) / vmode->width - 1.0f;
 			float ray_mouse_y = 1.0f - (2.0f * mouseY) / vmode->height;
 			float ray_mouse_z = 1.0f;
@@ -807,6 +846,28 @@ int main()
 			ray_wor = normalise(ray_wor);
 			printf("RAY: ");
 			print(ray_wor);
+			---------------------------------------------------*/
+
+			//to solve ray trace collision we need the a,b,c parameters to pass into our solveQuadratic function
+			//see https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection for an explanation
+			
+			
+			float t0, t1;
+
+			vec3 L = cam_pos - vec3(enemy_ship_x,enemy_ship_y,enemy_ship_z);
+			float a = dot(view_forward, view_forward);
+			float b = 2 * dot(view_forward, L);
+			float c = dot(L, L) - pow(sphere_radius,2);
+			bool test_collision = solveQuadratic(a,b,c,t0,t1);
+			if (test_collision)
+			{
+				printf("Hit\n");
+			}
+			else
+			{
+				printf("Miss\n");
+			}
+
 		}
 
 
