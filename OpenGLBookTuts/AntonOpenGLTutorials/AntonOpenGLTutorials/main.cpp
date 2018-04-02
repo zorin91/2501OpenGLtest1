@@ -205,6 +205,14 @@ int main()
 		enemy_ship_x, enemy_ship_y, enemy_ship_z, 1.0f									//3, 7, 11, 15,
 	};
 
+	float matrix2[] =
+	{
+		1.0f, 0.0f, 0.0f, 0.0f,									//0, 4,  8, 12,
+		0.0f, 1.0f, 0.0f, 0.0f,									//1, 5,  9, 13,
+		0.0f, 0.0f, 1.0f, 0.0f,									//2, 6, 10, 14,
+		enemy_ship_x, enemy_ship_y, enemy_ship_z, 1.0f									//3, 7, 11, 15,
+	};
+
 	float points_skybox[] = {
 		-10.0f,  10.0f, -10.0f,
 		-10.0f, -10.0f, -10.0f,
@@ -416,6 +424,78 @@ int main()
 	glEnableVertexAttribArray(1);
 
 
+//Fourth VAO a square to draw our ship
+	GLfloat textureExamplePoints[] =
+	{
+		//model pointing in the -z direction
+		//back side
+		-1.0f,-1.0f,1.5f,
+		-1.0f,0.5f,1.5f,
+		1.0f,0.5f,1.5f,
+
+		1.0f,0.5f,1.5f,
+		1.0f,-1.0f,1.5f,
+		-1.0f,-1.0f,1.5f,
+
+		//left side
+		-1.0f,-1.0f,1.5f,
+		-1.0f,-1.0f,-1.5f,
+		-1.0f,0.5f, -1.5f,
+
+		-1.0f,0.5f, -1.5f,
+		-1.0f,0.5f, 1.5f,
+		-1.0f,-1.0f,1.5f,
+
+		//right side
+		1.0f,-1.0f,1.5f,
+		1.0f,-1.0f,-1.5f,
+		1.0f,0.5f, -1.5f,
+
+		1.0f,0.5f, -1.5f,
+		1.0f,0.5f, 1.5f,
+		1.0f,-1.0f,1.5f,
+
+		//bottom side
+		-1.0f,-1.0f, 1.5f,
+		-1.0f,-1.0f, -1.5f,
+		1.0f,-1.0f,-1.5f,
+
+		1.0f,-1.0f,-1.5f,
+		1.0f,-1.0f,1.5f,
+		-1.0f,-1.0f, 1.5f,
+
+	
+
+		//top side 
+		-1.0f,0.5f,1.5f,
+		-1.0f,0.5f,-1.5f,
+		1.0f,0.5f, -1.5f,
+
+		1.0f,0.5f,-1.5f,
+		1.0f,0.5f, 1.5f,
+		-1.0f,0.5f,1.5f,
+
+
+
+	};
+
+		//create a vertex buffer object(vbo) to pass on our positions array to the GPU (Define vertex colours example)
+	GLuint tex_example_vbo = 0;
+	glGenBuffers(1, &tex_example_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, tex_example_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(textureExamplePoints), textureExamplePoints, GL_STATIC_DRAW);
+
+	//create a vertex attribute object(VAO) so that we dont have to bind each vertex buffer object every time we draw a mesh.
+	//VAO remembers all the vertex buffers that you want and the memory layout of each one. 
+	//Set up the VAO once per mesh and bind it before every mesh you want to draw.
+	GLuint vao5 = 0;
+	glGenVertexArrays(1, &vao5);
+	glBindVertexArray(vao5);
+	glBindBuffer(GL_ARRAY_BUFFER, tex_example_vbo);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(0);
+
+
 
 	//skybox shader
 	//parse vertex shader from external file
@@ -546,6 +626,41 @@ int main()
 	glUseProgram(shader_program_VertexColourExample);
 	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, matrix);
 
+
+	//Fifth SHADER ship texture
+	//parse vertex shader from external file
+	std::string vertex_source5 = ParseShader("ship_shader.vert");
+	const GLchar * vertex_shader5 = (const GLchar *)vertex_source5.c_str();
+
+	//parse fragment shader from external file
+	std::string fragment_source5 = ParseShader("ship_shader.frag");
+	const GLchar * fragment_shader5 = (const GLchar *)fragment_source5.c_str();
+
+	//compile the vertex shader
+	GLuint vs5 = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vs5, 1, &vertex_shader5, NULL);
+	glCompileShader(vs5);
+
+	//compile the fragment shader
+	GLuint fs5 = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fs5, 1, &fragment_shader5, NULL);
+	glCompileShader(fs5);
+
+	//using both the compiled vertex shader and compiled fragment shader we create a single, executable GPU shader program
+	GLuint shader_program_ship = glCreateProgram();
+	glAttachShader(shader_program_ship, vs5);
+	glAttachShader(shader_program_ship, fs5);
+	glLinkProgram(shader_program_ship);
+
+	//set matrix to uniform matrix in shader
+	glUseProgram(shader_program_ship);
+	int matrix_location2 = glGetUniformLocation(shader_program_ship, "matrix");
+
+	glUniformMatrix4fv(matrix_location2, 1, GL_FALSE, matrix2);
+
+
+
+
 	//sets clear color to grey
 	glClearColor(0.5, 0.5, 0.5, 1.0);
 
@@ -652,6 +767,122 @@ int main()
 	float proj_mat[] = { Sx, 0.0f, 0.0f, 0.0f, 0.0f, Sy, 0.0f, 0.0f, 0.0f, 0.0f, Sz, -1.0f, 0.0f, 0.0f, Pz, 0.0f };
 	mat4 proj_mat_ray = mat4( Sx, 0.0f, 0.0f,  0.0f, 0.0f,   Sy, 0.0f,  0.0f, 0.0f, 0.0f,   Sz, -1.0f, 0.0f, 0.0f,   Pz,  0.0f);
 
+
+	//loading in a texture
+	int img_x, img_y, img_n;
+	int force_channels = 4;
+	unsigned char* image_data = stbi_load(RELPATH"test123.png",&img_x, &img_y, &img_n,force_channels);
+	if (!image_data)
+	{
+		printf("Error:image not found!!!");
+	}
+
+	//swapping the image right side up
+	int width_in_bytes = img_x * 4;
+	unsigned char *top = NULL;
+	unsigned char *bottom = NULL;
+	unsigned char temp = 0;
+	int half_height = img_y / 2;
+
+	for (int row = 0; row < half_height;row++)
+	{
+		top = image_data + row * width_in_bytes;
+		bottom = image_data + (img_y - row - 1) * width_in_bytes;
+		for (int col = 0; col < width_in_bytes;col++)
+		{
+			temp = *top;
+			*top = *bottom;
+			*bottom = temp;
+			top++;
+			bottom++;
+		}
+	}
+
+	//copying image data into OpenGL texture
+	//***note we are aleardy using gl_texture0 for our skybox so we use gl_texture1 here i believe***
+	//we need to manually swap our active textures in and out
+	GLuint tex = 0;
+	glGenTextures(1, &tex);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, tex);
+	//specify a two-dimensional texture image
+	glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA,img_x,img_y,0,GL_RGBA,GL_UNSIGNED_BYTE,image_data);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+
+	//set our texture uniform in the ship shader
+	int ship_tex_loc = glGetUniformLocation(shader_program_ship, "basic_texture");
+	glUseProgram(shader_program_ship);
+	glUniform1i(ship_tex_loc,1);
+
+	//create texture coordinates
+
+	GLfloat texcoords[] = {
+		0.0f,1.0f,
+		0.0f,0.0f,
+		0.7f,0.0f,
+
+		0.7f,0.0f,
+		0.7f,1.0f,
+		0.0f,1.0f,
+
+		0.0f,1.0f,
+		0.0f,0.0f,
+		0.7f,0.0f,
+
+		0.7f,0.0f,
+		0.7f,1.0f,
+		0.0f,1.0f,
+
+		0.0f,1.0f,
+		0.0f,0.0f,
+		0.7f,0.0f,
+
+		0.7f,0.0f,
+		0.7f,1.0f,
+		0.0f,1.0f,
+		0.0f,1.0f,
+		0.0f,0.0f,
+		0.7f,0.0f,
+
+		0.7f,0.0f,
+		0.7f,1.0f,
+		0.0f,1.0f,
+		0.0f,1.0f,
+		0.0f,0.0f,
+		0.7f,0.0f,
+
+		0.7f,0.0f,
+		0.7f,1.0f,
+		0.0f,1.0f
+
+
+	};
+
+	GLuint vt_vbo;
+	glGenBuffers(1,&vt_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vt_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(texcoords), texcoords, GL_STATIC_DRAW);
+
+	//update the ship vao
+	glBindVertexArray(vao5);
+	glBindBuffer(GL_ARRAY_BUFFER, vt_vbo);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(1);
+
+
+
+
+	//intialize the values of our projection and view matrices in the ship vertex shader
+	int ship_view_matrix_location = glGetUniformLocation(shader_program_ship, "view");
+	glUseProgram(shader_program_ship);
+	glUniformMatrix4fv(ship_view_matrix_location, 1, GL_FALSE, view_mat.m);
+	int ship_projection_matrix_location = glGetUniformLocation(shader_program_ship, "proj");
+	glUseProgram(shader_program_ship);
+	glUniformMatrix4fv(ship_projection_matrix_location, 1, GL_FALSE, proj_mat);
 
 
 
@@ -992,6 +1223,10 @@ int main()
 			glUseProgram(shader_program_VertexColourExample);
 			glUniformMatrix4fv(view_matrix_location, 1, GL_FALSE, view_mat.m);
 
+			//pass in updated values to ship vertex shader
+			glUseProgram(shader_program_ship);
+			glUniformMatrix4fv(ship_view_matrix_location, 1, GL_FALSE, view_mat.m);
+
 			//pass in updated values to skybox vertex shader
 			glUseProgram(skybox_program);
 			glUniformMatrix4fv(skybox_view_matrix_location, 1, GL_FALSE, view_mat.m);
@@ -1046,6 +1281,11 @@ int main()
 		glUseProgram(shader_program_VertexColourExample);
 		glBindVertexArray(vao4);
 		glDrawArrays(GL_TRIANGLES, 0,12);
+
+		glUseProgram(shader_program_ship);
+		glUniformMatrix4fv(matrix_location2, 1, GL_FALSE, matrix2);
+		glBindVertexArray(vao5);
+		glDrawArrays(GL_TRIANGLES, 0, 30);
 
 
 		//update other events like the input handling
