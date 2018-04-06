@@ -19,6 +19,40 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+#define STARTMENU 0
+#define GAMEPLAY  1
+#define SHOP      2
+
+typedef struct
+{
+	float x;
+	float y;
+	float z;
+	int behaviour;
+	int hp;
+}enemy_t;
+
+void initEnemy(enemy_t& enemy)
+{
+	enemy.x = rand() % 10;
+	enemy.y = rand() % 10;
+	enemy.z = rand() % 10;
+	enemy.behaviour = rand() % 3;
+	enemy.hp = 100;
+}
+
+int gamestate = GAMEPLAY;
+float clearColors[3][3] = { {1.0, 0.0, 0.0}, {0.0, 0.0, 0.0}, {0.0, 0.0, 1.0} };
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
+{
+	if (key == GLFW_KEY_TAB && action == GLFW_PRESS)
+	{
+		gamestate++;
+		gamestate %= 3;
+		glClearColor(clearColors[gamestate][0], clearColors[gamestate][1], clearColors[gamestate][2], 1.0f);
+	}
+}
 
 static std::string ParseShader(std::string filepath)
 {
@@ -334,9 +368,9 @@ int main()
 	//vec3 positions for our triangle vectors
 	GLfloat points3[] =
 	{
-		0.5f,  0.5f, 0.0f,
-	   -0.5f,  0.5f, 0.0f,
-		1.0f,  1.0f, 0.0f
+		-0.01f,  -1.0f, 0.0f,
+	   0.01f,  -1.0f, 0.0f,
+		0.0f,  0.0f, -1.0f
 	};
 
 	//create a vertex buffer object(vbo) to pass on our positions array to the GPU 
@@ -428,53 +462,204 @@ int main()
 	GLfloat textureExamplePoints[] =
 	{
 		//model pointing in the -z direction
+
+		//top view
+		//top 3 squares
+		-0.5f,1.0f,1.5f,
+		-0.5f,1.0f,0.5f,
+		0.5f,1.0f,0.5f,
+
+		0.5f,1.0f,0.5f,
+		0.5f,1.0f,1.5f,
+		-0.5f,1.0f,1.5f,
+
+		-1.5f,1.0f,1.5f,
+		-1.5f,1.0f,0.5f,
+		-0.5f,1.0f,0.5f,
+
+		-0.5f,1.0f,0.5f,
+		-0.5f,1.0f,1.5f,
+		-1.5f,1.0f,1.5f,
+
+		0.5f,1.0f,1.5f,
+		0.5f,1.0f,0.5f,
+		1.5f,1.0f,0.5f,
+
+		1.5f,1.0f,0.5f,
+		1.5f,1.0f,1.5f,
+		0.5f,1.0f,1.5f,
+		//top 3 forward rectangles
+		-0.5f,1.0f,0.5f,
+		-0.5f,0.0f,-1.5f,
+		0.5f,0.0f,-1.5f,
+
+		0.5f,0.0f,-1.5f,
+		0.5f,1.0f,0.5f,
+		-0.5f,1.0f,0.5f,
+
+		-1.5f,1.0f,0.5f,
+		-1.5f,0.0f,-1.5f,
+		-0.5f,0.0f,-1.5f,
+
+		-0.5f,0.0f,-1.5f,
+		-0.5f,1.0f,0.5f,
+		-1.5f,1.0f,0.5f,
+
+		0.5f,1.0f,0.5f,
+		0.5f,0.0f,-1.5f,
+		1.5f,0.0f,-1.5f,
+
+		1.5f,0.0f,-1.5f,
+		1.5f,1.0f,0.5f,
+		0.5f,1.0f,0.5f,
+		//top long side
+		-1.5f, 0.0f,-1.5f,
+		-1.5f, 1.0f,1.5f,
+		-2.5f, 0.0f,1.5f,
+
+		1.5f, 0.0f,-1.5f,
+		2.5f, 0.0f,1.5f,
+		1.5f, 1.0f,1.5f,
+		//top side fillers
+		-1.5f, 1.0f,0.5f,
+		-1.5f, 1.0f,1.5f,
+		-1.5f, 0.0f,-1.5f,
+
+		1.5f, 1.0f,0.5f,
+		1.5f, 0.0f,-1.5f,
+		1.5f, 1.0f,1.5f,
+
 		//back side
-		-1.0f,-1.0f,1.5f,
-		-1.0f,0.5f,1.5f,
-		1.0f,0.5f,1.5f,
+		-1.5f, 1.0f,1.5f,
+		1.5f, 1.0f,1.5f,
+		2.5f, -1.0f,1.5f,
 
-		1.0f,0.5f,1.5f,
-		1.0f,-1.0f,1.5f,
-		-1.0f,-1.0f,1.5f,
+		2.5f, -1.0f,1.5f,
+		-2.5f, -1.0f,1.5f,
+		-1.5f, 1.0f,1.5f,
 
-		//left side
-		-1.0f,-1.0f,1.5f,
-		-1.0f,-1.0f,-1.5f,
-		-1.0f,0.5f, -1.5f,
+		1.5f, 1.0f,1.5f,
+		2.5f, 0.0f,1.5f,
+		2.5f, -1.0f,1.5f,
 
-		-1.0f,0.5f, -1.5f,
-		-1.0f,0.5f, 1.5f,
-		-1.0f,-1.0f,1.5f,
-
-		//right side
-		1.0f,-1.0f,1.5f,
-		1.0f,-1.0f,-1.5f,
-		1.0f,0.5f, -1.5f,
-
-		1.0f,0.5f, -1.5f,
-		1.0f,0.5f, 1.5f,
-		1.0f,-1.0f,1.5f,
-
+		-1.5f, 1.0f,1.5f,
+		-2.5f, -1.0f,1.5f,
+		-2.5f, 0.0f,1.5f,
 		//bottom side
-		-1.0f,-1.0f, 1.5f,
-		-1.0f,-1.0f, -1.5f,
-		1.0f,-1.0f,-1.5f,
+		1.5f, -1.0f,-1.5f,
+		2.5f, -1.0f,1.5f,
+		-2.5f, -1.0f,1.5f,
 
-		1.0f,-1.0f,-1.5f,
-		1.0f,-1.0f,1.5f,
-		-1.0f,-1.0f, 1.5f,
+		-2.5f, -1.0f,1.5f,
+		-1.5f, -1.0f,-1.5f,
+		1.5f, -1.0f,-1.5f,
+		//front side
 
-	
+		-1.5f,0.0f,-1.5f,
+		1.5f,0.0f,-1.5f,
+		1.5f,-1.0f,-1.5f,
 
-		//top side 
-		-1.0f,0.5f,1.5f,
-		-1.0f,0.5f,-1.5f,
-		1.0f,0.5f, -1.5f,
+		1.5f,-1.0f,-1.5f,
+		-1.5f, -1.0f, -1.5f,
+		-1.5f, 0.0f, -1.5f,
+		//left side 
+		-2.5f, 0.0f, 1.5f,
+		-1.5f, 0.0f, -1.5f,
+		-1.5f, -1.0f, -1.5f,
 
-		1.0f,0.5f,-1.5f,
-		1.0f,0.5f, 1.5f,
-		-1.0f,0.5f,1.5f,
+		-1.5f, -1.0f, -1.5f,
+		-2.5f, -1.0f, 1.5f,
+		-2.5f, 0.0f, 1.5f,
+		//right side 
+		2.5f, 0.0f, 1.5f,
+		1.5f, -1.0f, -1.5f,
+		1.5f, 0.0f, -1.5f,
 
+
+		1.5f, -1.0f, -1.5f,
+		2.5f, 0.0f, 1.5f,
+		2.5f, -1.0f, 1.5f,
+		//thrusters
+		//left thr, left side
+		-1.5f, -0.5f, 1.75,
+		-1.5f, 0.5f, 1.75,
+		-1.25f, 0.25f, 1.5,
+
+
+
+		-1.25f, 0.25f, 1.5,
+		-1.25f, -0.25f, 1.5,
+		-1.5f, -0.5f, 1.75,
+		//left thr, right side
+		-0.50f, -0.5f, 1.75,
+		-0.50f, 0.5f, 1.75,
+		-0.75f, 0.25f, 1.5,
+
+
+
+		-0.75f, 0.25f, 1.5,
+		-0.75f, -0.25f, 1.5,
+		-0.5f, -0.5f, 1.75,
+		//left thr, top side
+		-1.25f, 0.25f, 1.5,
+		-0.75f, 0.25f, 1.5,
+		-0.5f, 0.5f, 1.75,
+
+
+
+		-0.5f, 0.5f, 1.75,
+		-1.5f, 0.5f, 1.75,
+		-1.25f, 0.25f, 1.5,
+		//left thr, bottom side
+		-1.25f, -0.25f, 1.5,
+		-0.75f, -0.25f, 1.5,
+		-0.5f, -0.5f, 1.75,
+
+
+
+		-0.5f, -0.5f, 1.75,
+		-1.5f, -0.5f, 1.75,
+		-1.25f, -0.25f, 1.5,
+		//right thr, left side
+		1.5f, -0.5f, 1.75,
+		1.5f, 0.5f, 1.75,
+		1.25f, 0.25f, 1.5,
+
+
+
+		1.25f, 0.25f, 1.5,
+		1.25f, -0.25f, 1.5,
+		1.5f, -0.5f, 1.75,
+		//right thr, right side
+		0.50f, -0.5f, 1.75,
+		0.50f, 0.5f, 1.75,
+		0.75f, 0.25f, 1.5,
+
+
+
+		0.75f, 0.25f, 1.5,
+		0.75f, -0.25f, 1.5,
+		0.5f, -0.5f, 1.75,
+		//right thr, top side
+		1.25f, 0.25f, 1.5,
+		0.75f, 0.25f, 1.5,
+		0.5f, 0.5f, 1.75,
+
+
+
+		0.5f, 0.5f, 1.75,
+		1.5f, 0.5f, 1.75,
+		1.25f, 0.25f, 1.5,
+		//right thr, bottom side
+		1.25f, -0.25f, 1.5,
+		0.75f, -0.25f, 1.5,
+		0.5f, -0.5f, 1.75,
+
+
+
+		0.5f, -0.5f, 1.75,
+		1.5f, -0.5f, 1.75,
+		1.25f, -0.25f, 1.5
 
 
 	};
@@ -668,7 +853,9 @@ int main()
 	float sphere_radius = 1.0f;
 
 	//camera variable setup
-	float cam_speed = 5.0f;
+	float cam_speed_z = 0.0f;
+	float cam_speed_x = 0.0f;
+	float cam_speed_y = 1.0f;
 	vec3 cam_pos = { 0.0f, 0.0f, 2.0f }; //make sure that the z component is not zero otherwise it will be within the near clipping plane(assuming we draw something at the origin here)
 	float cam_yaw = 0.0f;
 	float cam_pitch = 0.0f;
@@ -771,7 +958,7 @@ int main()
 	//loading in a texture
 	int img_x, img_y, img_n;
 	int force_channels = 4;
-	unsigned char* image_data = stbi_load(RELPATH"test123.png",&img_x, &img_y, &img_n,force_channels);
+	unsigned char* image_data = stbi_load(RELPATH"spaceship_texture_map.jpg",&img_x, &img_y, &img_n,force_channels);
 	if (!image_data)
 	{
 		printf("Error:image not found!!!");
@@ -818,48 +1005,126 @@ int main()
 	glUseProgram(shader_program_ship);
 	glUniform1i(ship_tex_loc,1);
 
+
+
+
 	//create texture coordinates
 
 	GLfloat texcoords[] = {
+		//top side
+		//3 squares
 		0.0f,1.0f,
 		0.0f,0.0f,
-		0.7f,0.0f,
+		0.333f,0.0f,
 
-		0.7f,0.0f,
-		0.7f,1.0f,
-		0.0f,1.0f,
-
-		0.0f,1.0f,
-		0.0f,0.0f,
-		0.7f,0.0f,
-
-		0.7f,0.0f,
-		0.7f,1.0f,
+		0.333f,0.0f,
+		0.333f,1.0f,
 		0.0f,1.0f,
 
 		0.0f,1.0f,
 		0.0f,0.0f,
-		0.7f,0.0f,
+		0.333f,0.0f,
 
-		0.7f,0.0f,
-		0.7f,1.0f,
+		0.333f,0.0f,
+		0.333f,1.0f,
 		0.0f,1.0f,
-		0.0f,1.0f,
-		0.0f,0.0f,
-		0.7f,0.0f,
 
-		0.7f,0.0f,
-		0.7f,1.0f,
-		0.0f,1.0f,
 		0.0f,1.0f,
 		0.0f,0.0f,
-		0.7f,0.0f,
+		0.333f,0.0f,
 
-		0.7f,0.0f,
+		0.333f,0.0f,
+		0.333f,1.0f,
+		0.0f,1.0f,
+		//3 rectangles (front window)
+		0.0f,1.0f,
+		0.0f,0.0f,
+		0.333f,0.0f,
+
+		0.333f,0.0f,
+		0.333f,1.0f,
+		0.0f,1.0f,
+
+		0.0f,1.0f,
+		0.0f,0.0f,
+		0.333f,0.0f,
+
+		0.333f,0.0f,
+		0.333f,1.0f,
+		0.0f,1.0f,
+
 		0.7f,1.0f,
-		0.0f,1.0f
+		0.7f,0.0f,
+		1.0f,0.0f,
 
+		1.0f,0.0f,
+		1.0f,1.0f,
+		0.7f,1.0f,
+		//top long side
+		0.0f,0.5f,
+		0.0f,0.0f,
+		0.333f,0.0f,
 
+		0.333f,0.0f,
+		0.333f,1.0f,
+		0.0f,1.0f,
+		//top side fillers
+		0.0f,1.0f,
+		0.0f,0.0f,
+		0.333f,0.0f,
+
+		0.333f,0.0f,
+		0.333f,1.0f,
+		0.0f,1.0f,
+		//back side
+		0.0f,1.0f,
+		0.0f,0.0f,
+		0.333f,0.0f,
+
+		0.333f,0.0f,
+		0.333f,1.0f,
+		0.0f,1.0f,
+
+		0.0f,1.0f,
+		0.0f,0.0f,
+		0.333f,0.0f,
+
+		0.333f,0.0f,
+		0.333f,1.0f,
+		0.0f,1.0f,
+		//bottom side
+		0.0f,1.0f,
+		0.0f,0.0f,
+		0.333f,0.0f,
+
+		0.333f,0.0f,
+		0.333f,1.0f,
+		0.0f,1.0f,
+		//front
+		0.0f,1.0f,
+		0.0f,0.0f,
+		0.333f,0.0f,
+
+		0.333f,0.0f,
+		0.333f,1.0f,
+		0.0f,1.0f,
+		//left side
+		0.0f,1.0f,
+		0.0f,0.0f,
+		0.333f,0.0f,
+
+		0.333f,0.0f,
+		0.333f,1.0f,
+		0.0f,1.0f,
+		//right side
+		0.0f, 1.0f,
+		0.0f, 0.0f,
+		0.333f, 0.0f,
+
+		0.333f, 0.0f,
+		0.333f, 1.0f,
+		0.0f, 1.0f
+		//thrusters
 	};
 
 	GLuint vt_vbo;
@@ -913,386 +1178,536 @@ int main()
 	double mouseXDisplacement = 0;
 	double mouseYDisplacement = 0;
 
+	bool is_firing = false;
+
 	GLuint skybox = 0;
 
 	create_cube_map(RELPATH"bkg1_back6.png", RELPATH"bkg1_front5.png", RELPATH"bkg1_top3.png", RELPATH"bkg1_bottom4.png", RELPATH"bkg1_left2.png", RELPATH"bkg1_right1.png",&skybox);
 
 	int tex_loc = glGetUniformLocation(skybox_program, "cube_texture");
 
+	glfwSetKeyCallback(window, key_callback);
+
+	int enemiesLeft = 10;
+	enemy_t enemies[10];
+	for (int i = 0; i < 10; i++)
+	{
+		initEnemy(enemies[i]);
+	}
+
+	//#define STARTMENU 0
+	//#define GAMEPLAY  1
+	//#define SHOP      2
+
 	//drawing loop
 	while (!glfwWindowShouldClose(window))
 	{
-		//resets mouse position to center of screen and checks for mouse movement
-		if (mouseXDisplacement != 0.0 || mouseYDisplacement != 0.0)
+		switch (gamestate)
 		{
-			glfwSetCursorPos(window, vmode->width / 2, vmode->height / 2);
-		}
-		
-
-		glfwGetCursorPos(window, &mouseX, &mouseY);
-
-		mouseXDisplacement = mouseX - (double)(vmode->width / 2);
-		mouseYDisplacement = mouseY - (double)(vmode->height / 2);
-
-
-		//create escape key
-		if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_ESCAPE)) {
-			glfwSetWindowShouldClose(window, 1);
-		}
-
-
-		//math test section lol
-		//bug case looking at (-1,0,0) or (1,0,0)
-
-
-
-		//timer for animation (this is probably how we should always do it)
-		static double previous_seconds = glfwGetTime(); //why is it static here? does it refer to this (static storage duration. The storage for the object is allocated when the program begins and deallocated when the program ends. Only one instance of the object exists. All objects declared at namespace scope (including global namespace) have this storage duration, plus those declared with static or extern.)
-		double current_seconds = glfwGetTime();
-		double elapsed_seconds = current_seconds - previous_seconds;
-		previous_seconds = current_seconds;
-
-		//reverse direction when going too far left or right
-		if (fabs(last_position) > 1.0f)
-		{
-			speed = -speed;
-		}
-
-
-		//code for moving camera, we use a bool here and change the view matrix after checking all input in case we press multiple buttons
-
-		bool cam_moved = false;
-		if (glfwGetKey(window, GLFW_KEY_A))
-		{
-			cam_pos -= view_right *  cam_speed * elapsed_seconds;
-			cam_moved = true;
-		}
-		if (glfwGetKey(window, GLFW_KEY_D))
-		{
-			cam_pos += view_right *  cam_speed * elapsed_seconds;
-			cam_moved = true;
-		}
-		if (glfwGetKey(window, GLFW_KEY_Q))
-		{
-			cam_pos += view_up * cam_speed * elapsed_seconds;
-			cam_moved = true;
-		}
-		if (glfwGetKey(window, GLFW_KEY_E))
-		{
-			cam_pos -= view_up * cam_speed * elapsed_seconds;
-			cam_moved = true;
-		}
-		if (glfwGetKey(window, GLFW_KEY_W))
-		{
-			//print(view_forward);
-			//cam_pos.v[2] -= cam_speed * elapsed_seconds;
-			cam_pos += view_forward * cam_speed * elapsed_seconds;
-			//printf("New componenets. X:%f,Y:%f,Z:%f\n",cam_pos.v[0], cam_pos.v[1], cam_pos.v[2]);
-			cam_moved = true;
-		}
-		if (glfwGetKey(window, GLFW_KEY_S))
-		{
-			//cam_pos.v[2] += cam_speed * elapsed_seconds;
-			
-			cam_pos -= view_forward * cam_speed * elapsed_seconds;
-			//printf("New componenets. X:%f,Y:%f,Z:%f\n", cam_pos.v[0], cam_pos.v[1], cam_pos.v[2]);
-			cam_moved = true;
-		}
-
-		/*
-		if (glfwGetKey(window, GLFW_KEY_LEFT))
-		{
-			cam_yaw += cam_yaw_speed * elapsed_seconds;
-			cam_moved = true;
-		}
-		if (glfwGetKey(window, GLFW_KEY_RIGHT))
-		{
-			cam_yaw -= cam_yaw_speed * elapsed_seconds;
-			cam_moved = true;
-		}
-		*/
-
-		if (mouseXDisplacement > 0.0)
-		{
-			cam_yaw -= mouseXDisplacement;
-			if (cam_yaw < 0.0f)
+			case STARTMENU:
 			{
-				cam_yaw = 360.0f;
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				glfwPollEvents();
+				glfwSwapBuffers(window);
+				break;
 			}
-			
-			cam_moved = true;
-		}
-
-		if (mouseXDisplacement < 0.0)
-		{
-			cam_yaw -= mouseXDisplacement;
-			if (cam_yaw > 360.0f)
+			case GAMEPLAY:
 			{
-				cam_yaw = 0.0f;
+				//resets mouse position to center of screen and checks for mouse movement
+				if (mouseXDisplacement != 0.0 || mouseYDisplacement != 0.0)
+				{
+					glfwSetCursorPos(window, vmode->width / 2, vmode->height / 2);
+				}
+
+
+				glfwGetCursorPos(window, &mouseX, &mouseY);
+
+				mouseXDisplacement = mouseX - (double)(vmode->width / 2);
+				mouseYDisplacement = mouseY - (double)(vmode->height / 2);
+
+
+				//create escape key
+				if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_ESCAPE)) {
+					glfwSetWindowShouldClose(window, 1);
+				}
+
+
+				//math test section lol
+				//bug case looking at (-1,0,0) or (1,0,0)
+
+
+
+				//timer for animation (this is probably how we should always do it)
+				static double previous_seconds = glfwGetTime(); //why is it static here? does it refer to this (static storage duration. The storage for the object is allocated when the program begins and deallocated when the program ends. Only one instance of the object exists. All objects declared at namespace scope (including global namespace) have this storage duration, plus those declared with static or extern.)
+				double current_seconds = glfwGetTime();
+				double elapsed_seconds = current_seconds - previous_seconds;
+				previous_seconds = current_seconds;
+
+				//reverse direction when going too far left or right
+				if (fabs(last_position) > 1.0f)
+				{
+					speed = -speed;
+				}
+
+
+
+				//code for moving camera, we use a bool here and change the view matrix after checking all input in case we press multiple buttons
+
+				bool cam_moved = false;
+				if (glfwGetKey(window, GLFW_KEY_A))
+				{
+					//cam_pos -= view_right *  cam_speed * elapsed_seconds;
+					cam_speed_x -= 0.07;
+					cam_moved = true;
+				}
+				if (glfwGetKey(window, GLFW_KEY_D))
+				{
+					//cam_pos += view_right *  cam_speed * elapsed_seconds;
+					cam_speed_x += 0.07;
+					cam_moved = true;
+				}
+				if (glfwGetKey(window, GLFW_KEY_Q))
+				{
+					cam_pos += view_up * cam_speed_y * elapsed_seconds;
+					cam_moved = true;
+				}
+				if (glfwGetKey(window, GLFW_KEY_E))
+				{
+					cam_pos -= view_up * cam_speed_y * elapsed_seconds;
+					cam_moved = true;
+				}
+				if (glfwGetKey(window, GLFW_KEY_W))
+				{
+					//cam_pos += view_forward * cam_speed * elapsed_seconds;
+					cam_speed_z += 0.1;
+					cam_moved = true;
+				}
+				if (glfwGetKey(window, GLFW_KEY_S))
+				{
+
+					cam_speed_z -= 0.1;
+					//cam_pos -= view_forward * cam_speed * elapsed_seconds;
+					cam_moved = true;
+				}
+				if (glfwGetKey(window, GLFW_KEY_X))
+				{
+					if (cam_speed_z > 1.0f)
+					{
+						cam_speed_z -= 0.2;
+					}
+					else if (cam_speed_z < -1.0f)
+					{
+						cam_speed_z += 0.2;
+					}
+					else
+					{
+						cam_speed_z = 0.0f;
+					}
+
+					if (cam_speed_x > 1.0f)
+					{
+						cam_speed_x -= 0.2;
+					}
+					else if (cam_speed_x < -1.0f)
+					{
+						cam_speed_x += 0.2;
+					}
+					else
+					{
+						cam_speed_x = 0.0f;
+					}
+				}
+
+				/*
+				if (glfwGetKey(window, GLFW_KEY_LEFT))
+				{
+				cam_yaw += cam_yaw_speed * elapsed_seconds;
+				cam_moved = true;
+				}
+				if (glfwGetKey(window, GLFW_KEY_RIGHT))
+				{
+				cam_yaw -= cam_yaw_speed * elapsed_seconds;
+				cam_moved = true;
+				}
+				*/
+
+				float total_speed = (cam_speed_x*1.5) + cam_speed_z;
+
+				if (total_speed < 0.1f)
+				{
+					total_speed = 3;
+				}
+				else
+				{
+					total_speed = 30 / total_speed;
+				}
+
+				printf("%f\n", total_speed);
+
+				if (mouseXDisplacement > 0.0)
+				{
+					if (mouseXDisplacement > total_speed)
+					{
+						mouseXDisplacement = total_speed;
+					}
+					cam_yaw -= mouseXDisplacement;
+					if (cam_yaw < 0.0f)
+					{
+						cam_yaw = 360.0f;
+					}
+
+					cam_moved = true;
+				}
+
+				if (mouseXDisplacement < 0.0)
+				{
+					if (mouseXDisplacement < -total_speed)
+					{
+						mouseXDisplacement = -total_speed;
+					}
+					cam_yaw -= mouseXDisplacement;
+					if (cam_yaw > 360.0f)
+					{
+						cam_yaw = 0.0f;
+					}
+					cam_moved = true;
+				}
+
+				if (mouseYDisplacement > 0.0)
+				{
+					if (mouseYDisplacement > total_speed)
+					{
+						mouseYDisplacement = total_speed;
+					}
+					cam_pitch -= mouseYDisplacement;
+
+					if (cam_pitch < -89.0f)
+					{
+						cam_pitch = -89.0f;
+					}
+					cam_moved = true;
+
+
+
+				}
+
+				if (mouseYDisplacement < 0.0)
+				{
+					if (mouseYDisplacement < -total_speed)
+					{
+						mouseYDisplacement = -total_speed;
+					}
+
+					cam_pitch -= mouseYDisplacement;
+					if (cam_pitch > 89.0f)
+					{
+						cam_pitch = 89.0f;
+					}
+					cam_moved = true;
+
+				}
+
+				//ray casting (dont need commented section since we are always facing forward direction)
+				if (glfwGetKey(window, GLFW_KEY_SPACE))
+				{
+					is_firing = true;
+
+
+					/*
+					float ray_mouse_x = (2.0f * mouseX) / vmode->width - 1.0f;
+					float ray_mouse_y = 1.0f - (2.0f * mouseY) / vmode->height;
+					float ray_mouse_z = 1.0f;
+					vec3 ray_nds = vec3(ray_mouse_x, ray_mouse_y, ray_mouse_z);
+					vec4 ray_clip = vec4(ray_nds.v[0], ray_nds.v[1], -1.0f, 1.0f);
+					vec4 ray_eye = inverse(proj_mat_ray) * ray_clip;
+					ray_eye = vec4(ray_eye.v[0], ray_eye.v[1], -1.0, 0.0);
+					vec4 temp = (inverse(view_mat) * ray_eye);
+					vec3 ray_wor = vec3(temp.v[0], temp.v[1], temp.v[2]);
+					ray_wor = normalise(ray_wor);
+					printf("RAY: ");
+					print(ray_wor);
+					---------------------------------------------------*/
+
+					//to solve ray trace collision we need the a,b,c parameters to pass into our solveQuadratic function
+					//see https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection for an explanation
+
+
+					float t0, t1;
+					/*
+					vec3 L = cam_pos - vec3(enemy_ship_x, enemy_ship_y, enemy_ship_z);
+					float a = dot(view_forward, view_forward);
+					float b = 2 * dot(view_forward, L);
+					float c = dot(L, L) - pow(sphere_radius, 2);
+					bool test_collision = solveQuadratic(a, b, c, t0, t1);
+					if (test_collision)
+					{
+						printf("Hit\n");
+					}
+					else
+					{
+						printf("Miss\n");
+					}
+					*/
+
+					for (int i = 0; i < enemiesLeft; i++)
+					{
+						vec3 L = cam_pos - vec3(enemies[i].x, enemies[i].y, enemies[i].z);
+						float a = dot(view_forward, view_forward);
+						float b = 2 * dot(view_forward, L);
+						float c = dot(L, L) - pow(sphere_radius, 2);
+						bool test_collision = solveQuadratic(a, b, c, t0, t1);
+						if (test_collision)
+						{
+							printf("Hit\n");
+							enemies[i].hp -= 5;
+							if (enemies[i].hp <= 0)
+							{
+								for (int n = i; n < enemiesLeft-1; n++)
+								{
+									enemies[n] = enemies[n + 1];
+								}
+								enemiesLeft--;
+							//enemies[i] = enemies[enemiesLeft - i];
+							//enemiesLeft--;
+							}
+						}
+					}
+
+				}
+
+
+				cam_pos += view_forward * cam_speed_z * elapsed_seconds;
+				cam_pos += view_right * cam_speed_x * elapsed_seconds;
+				
+				//we update/recalculate our view matrix if one of the previous keys were pressed
+				//if (cam_moved)
+				if (1)
+				{
+
+
+
+
+
+					//system("CLS");
+
+					//section to test course book camera
+					//default offset {0,0,-2} -> 2 units forward
+					//rotate_vector_by_quaternion(vec3& v, versor& q, vec3& vprime)
+
+					vec3 actual_offset = target_offset;
+					vec3 actual_offset_result;
+					vec3 actual_offset_final;
+
+					//actual_offset = normalise(actual_offset);
+
+					//versor quat_yaw = quat_from_axis_deg(cam_yaw, view_up.v[0], view_up.v[1], view_up.v[2]);
+					versor quat_yaw = quat_from_axis_deg(cam_yaw, 0.0, 1.0, 0.0);
+					quat_yaw = normalise(quat_yaw);
+
+					//rotate_vector_by_quaternion(actual_offset, quat_yaw,actual_offset_result);
+					//printf("result of first quaternion applied to offset: x:%f y:%f z:%f angle used:%f\n", actual_offset_result.v[0], actual_offset_result.v[1], actual_offset_result.v[2], cam_yaw);
+
+					//	printf("yaw angle:%f\n",cam_yaw);
+					//printf("pitch angle:%f\n", cam_pitch);
+					//printf("final offset direction: x:%f y:%f z:%f\n", actual_offset_result.v[0], actual_offset_result.v[1], actual_offset_result.v[2]);
+
+					//	view_forward = actual_offset_result;
+					//	view_forward = normalise(view_forward);
+					//	view_right = cross(view_forward,vec3(0.0f,1.0f,0.0f));
+					//	view_right = normalise(view_right);
+
+					//printf("before forward vector:");
+					//	print(view_forward);
+					//	printf("before right vector:");
+					//print(view_right);
+
+
+					//versor quat_pitch = quat_from_axis_deg(cam_pitch, view_right.v[0], view_right.v[1], view_right.v[2]);
+					versor quat_pitch = quat_from_axis_deg(cam_pitch, 1.0, 0.0, 0.0);
+					quat_pitch = normalise(quat_pitch);
+
+
+
+
+					versor result_quat = quat_yaw * quat_pitch;
+
+					//print(result_quat);
+
+					rotate_vector_by_quaternion(actual_offset, result_quat, actual_offset_final);
+					actual_offset_final = normalise(actual_offset_final);
+					printf("test forward vec\n");
+					print(actual_offset_final);
+
+					//rotate_vector_by_quaternion(actual_offset_result, quat_pitch, actual_offset_final);
+
+					printf("result of second quaternion applied to offset: x:%f y:%f z:%f angle used:%f\n", actual_offset_final.v[0], actual_offset_final.v[1], actual_offset_final.v[2], cam_pitch);
+
+					view_forward = actual_offset_final;
+
+					view_forward = normalise(view_forward);
+
+					view_right = cross(view_forward, vec3(0.0f, 1.0f, 0.0f));
+
+					view_right = normalise(view_right);
+
+					//vec3 test_up = cross(view_right, view_forward);
+					//test_up = normalise(test_up);
+					//printf("test up vector:");
+					//print(test_up);
+
+					//	printf("forward vector:");
+					//	print(view_forward);
+					//	printf("right vector:");
+					//	print(view_right);
+
+					view_up = cross(view_right, view_forward);
+					view_up = normalise(view_up);
+
+
+					//printf("forward vector:");
+					//print(view_forward);
+					//printf("right vector:");
+					//print(view_right);
+					printf("up vector:");
+					print(view_up);
+					printf("-----------------------------------------------------------------\n");
+
+					//vec3 look_at_target = actual_offset_result + cam_pos;
+					vec3 look_at_target = actual_offset_final + cam_pos;
+					printf("final offset value:");
+					print(actual_offset_final);
+
+					camera_matrix = look_at(vec3(cam_pos.v[0], cam_pos.v[1], cam_pos.v[2]), look_at_target, view_up);
+					//camera_matrix = look_at(vec3(cam_pos.v[0], cam_pos.v[1], cam_pos.v[2]), look_at_target, vec3(0.0,1.0,0.0));
+
+					//initializing the orientation versor for our camera
+					//lets try the cross product of our two vectors in one versor
+					//vec3 testVector = cross()
+
+					//
+
+
+					//mat4 R = rotate_y_deg(identity_mat4(), -cam_yaw);
+					//mat4 Rx = rotate_x_deg(identity_mat4(), -cam_pitch);
+					//mat4 view_mat = R  * T * init_view_matrix;
+					//mat4 view_mat = testMat * T;
+					//mat4 view_mat = finalRot * T;
+					mat4 view_mat = camera_matrix;
+					//print(view_mat);
+
+
+					//pass in updated values to entity vertex shader
+					glUseProgram(shader_program_VertexColourExample);
+					glUniformMatrix4fv(view_matrix_location, 1, GL_FALSE, view_mat.m);
+
+					//pass in updated values to ship vertex shader
+					glUseProgram(shader_program_ship);
+					glUniformMatrix4fv(ship_view_matrix_location, 1, GL_FALSE, view_mat.m);
+
+					//pass in updated values to skybox vertex shader
+					glUseProgram(skybox_program);
+					glUniformMatrix4fv(skybox_view_matrix_location, 1, GL_FALSE, view_mat.m);
+
+
+				}
+
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+				glDepthMask(GL_FALSE);
+				glUseProgram(skybox_program);
+				glUniform1i(tex_loc, 0);
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
+				glBindVertexArray(vao_sky);
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+				glDepthMask(GL_TRUE);
+
+
+
+				//updates the x component of the matrix in this case the 12th array position
+				//matrix[12] = elapsed_seconds * speed + last_position;
+				//last_position = matrix[12];
+				//rotation around x axis corresponds to 5,6,9 and 10 like this
+				//matrix[5] = cos(last_position* 180/3.14);
+				//matrix[6] = sin(last_position * 180 / 3.14);
+				//matrix[9] = -sin(last_position * 180 / 3.14);
+				//matrix[10] = cos(last_position * 180 / 3.14);
+
+
+				glUseProgram(shader_program_VertexColourExample);
+
+				glUniformMatrix4fv(matrix_location, 1, GL_FALSE, matrix);
+
+				//wipe the drawing surface clear	
+
+
+				//glUseProgram(shader_program_purple);
+				//glBindVertexArray(vao);
+				////draw points 0-3 from the currently bound VAO with current in-use shader
+				//glDrawArrays(GL_TRIANGLES, 0, 6);
+
+				//glUseProgram(shader_program_red);
+				//glBindVertexArray(vao2);
+				////draw points 0-3 from the currently bound VAO with current in-use shader
+				//glDrawArrays(GL_TRIANGLES, 0, 3);
+
+				//glUseProgram(shader_program_blue);
+				//glBindVertexArray(vao3);
+				////draw points 0-3 from the currently bound VAO with current in-use shader
+				//glDrawArrays(GL_TRIANGLES, 0, 3);
+
+			//	glUseProgram(shader_program_VertexColourExample);
+				//glBindVertexArray(vao4);
+				//glDrawArrays(GL_TRIANGLES, 0, 12);
+
+				//matrix2[12] = enemy_ship_x;
+				//matrix2[13] = enemy_ship_y;
+				//matrix2[14] = enemy_ship_z;
+
+				glUseProgram(shader_program_ship);
+				glUniformMatrix4fv(matrix_location2, 1, GL_FALSE, matrix2);
+				glBindVertexArray(vao5);
+				//glDrawArrays(GL_TRIANGLES, 0, 132);
+
+				for (int i = 0; i < enemiesLeft; i++)
+				{
+					int movement = enemies[i].behaviour - 1;
+
+					enemies[i].x += movement * (-cam_pos.v[0] / 500);
+					enemies[i].y += movement * (-cam_pos.v[1] / 500);
+					enemies[i].z += movement * (-cam_pos.v[2] / 500);
+
+					matrix2[12] = enemies[i].x;
+					matrix2[13] = enemies[i].y;
+					matrix2[14] = enemies[i].z;
+
+					glUniformMatrix4fv(matrix_location2, 1, GL_FALSE, matrix2);
+					glBindVertexArray(vao5);
+					glDrawArrays(GL_TRIANGLES, 0, 132);
+				}
+
+				if (is_firing)
+				{
+					glUseProgram(shader_program_red);
+					glBindVertexArray(vao3);
+					glDrawArrays(GL_TRIANGLES, 0, 3);
+					is_firing = false;
+				}
+
+				//update other events like the input handling
+				glfwPollEvents();
+				//put the stuff we've been drawing onto the display
+				glfwSwapBuffers(window);
+				break;
 			}
-			cam_moved = true;
-		}
-
-		if (mouseYDisplacement > 0.0)
-		{
-
-			cam_pitch -= mouseYDisplacement;
-
-			if (cam_pitch < -89.0f)
+			case SHOP:
 			{
-				cam_pitch = -89.0f;
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				glfwPollEvents();
+				glfwSwapBuffers(window);
+				break;
 			}
-			cam_moved = true;
-
-
-
-		}
-
-		if (mouseYDisplacement < 0.0)
-		{
-
-			cam_pitch -= mouseYDisplacement;
-			if (cam_pitch > 89.0f)
-			{
-				cam_pitch = 89.0f;
-			}
-			cam_moved = true;
-
-		}
-
-		//ray casting (dont need commented section since we are always facing forward direction)
-		if (glfwGetKey(window, GLFW_KEY_SPACE))
-		{
-
-			/*
-			float ray_mouse_x = (2.0f * mouseX) / vmode->width - 1.0f;
-			float ray_mouse_y = 1.0f - (2.0f * mouseY) / vmode->height;
-			float ray_mouse_z = 1.0f;
-			vec3 ray_nds = vec3(ray_mouse_x, ray_mouse_y, ray_mouse_z);
-			vec4 ray_clip = vec4(ray_nds.v[0], ray_nds.v[1], -1.0f, 1.0f);
-			vec4 ray_eye = inverse(proj_mat_ray) * ray_clip;
-			ray_eye = vec4(ray_eye.v[0], ray_eye.v[1], -1.0, 0.0);
-			vec4 temp = (inverse(view_mat) * ray_eye);
-			vec3 ray_wor = vec3(temp.v[0], temp.v[1], temp.v[2]);
-			ray_wor = normalise(ray_wor);
-			printf("RAY: ");
-			print(ray_wor);
-			---------------------------------------------------*/
-
-			//to solve ray trace collision we need the a,b,c parameters to pass into our solveQuadratic function
-			//see https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection for an explanation
-			
-			
-			float t0, t1;
-
-			vec3 L = cam_pos - vec3(enemy_ship_x,enemy_ship_y,enemy_ship_z);
-			float a = dot(view_forward, view_forward);
-			float b = 2 * dot(view_forward, L);
-			float c = dot(L, L) - pow(sphere_radius,2);
-			bool test_collision = solveQuadratic(a,b,c,t0,t1);
-			if (test_collision)
-			{
-				printf("Hit\n");
-			}
-			else
-			{
-				printf("Miss\n");
-			}
-
-		}
-
-
-
-		//we update/recalculate our view matrix if one of the previous keys were pressed
-		if (cam_moved)
-		{
-
-			
-
-
-
-			//system("CLS");
-
-			//section to test course book camera
-			//default offset {0,0,-2} -> 2 units forward
-			//rotate_vector_by_quaternion(vec3& v, versor& q, vec3& vprime)
-
-			vec3 actual_offset = target_offset;
-			vec3 actual_offset_result;
-			vec3 actual_offset_final;
-
-			//actual_offset = normalise(actual_offset);
-
-			//versor quat_yaw = quat_from_axis_deg(cam_yaw, view_up.v[0], view_up.v[1], view_up.v[2]);
-			versor quat_yaw = quat_from_axis_deg(cam_yaw, 0.0, 1.0, 0.0);
-			quat_yaw = normalise(quat_yaw);
-
-			//rotate_vector_by_quaternion(actual_offset, quat_yaw,actual_offset_result);
-			//printf("result of first quaternion applied to offset: x:%f y:%f z:%f angle used:%f\n", actual_offset_result.v[0], actual_offset_result.v[1], actual_offset_result.v[2], cam_yaw);
-
-		//	printf("yaw angle:%f\n",cam_yaw);
-			//printf("pitch angle:%f\n", cam_pitch);
-			//printf("final offset direction: x:%f y:%f z:%f\n", actual_offset_result.v[0], actual_offset_result.v[1], actual_offset_result.v[2]);
-
-		//	view_forward = actual_offset_result;
-		//	view_forward = normalise(view_forward);
-		//	view_right = cross(view_forward,vec3(0.0f,1.0f,0.0f));
-		//	view_right = normalise(view_right);
-
-			//printf("before forward vector:");
-		//	print(view_forward);
-		//	printf("before right vector:");
-			//print(view_right);
-		
-
-			//versor quat_pitch = quat_from_axis_deg(cam_pitch, view_right.v[0], view_right.v[1], view_right.v[2]);
-			versor quat_pitch = quat_from_axis_deg(cam_pitch, 1.0, 0.0, 0.0);
-			quat_pitch = normalise(quat_pitch);
-
-	
-
-
-			versor result_quat = quat_yaw * quat_pitch;
-
-			//print(result_quat);
-
-			rotate_vector_by_quaternion(actual_offset, result_quat, actual_offset_final);
-			actual_offset_final = normalise(actual_offset_final);
-			printf("test forward vec\n");
-			print(actual_offset_final);
-
-			//rotate_vector_by_quaternion(actual_offset_result, quat_pitch, actual_offset_final);
-
-			printf("result of second quaternion applied to offset: x:%f y:%f z:%f angle used:%f\n", actual_offset_final.v[0], actual_offset_final.v[1], actual_offset_final.v[2], cam_pitch);
-
-			view_forward = actual_offset_final;
-
-			view_forward = normalise(view_forward);
-
-			view_right = cross(view_forward, vec3(0.0f,1.0f,0.0f));
-
-			view_right = normalise(view_right);
-
-			//vec3 test_up = cross(view_right, view_forward);
-			//test_up = normalise(test_up);
-			//printf("test up vector:");
-			//print(test_up);
-
-		//	printf("forward vector:");
-		//	print(view_forward);
-		//	printf("right vector:");
-		//	print(view_right);
-
-			view_up = cross(view_right,view_forward);
-			view_up = normalise(view_up);
-
-
-			//printf("forward vector:");
-			//print(view_forward);
-			//printf("right vector:");
-			//print(view_right);
-			printf("up vector:");
-			print(view_up);
-			printf("-----------------------------------------------------------------\n");
-
-			//vec3 look_at_target = actual_offset_result + cam_pos;
-			vec3 look_at_target = actual_offset_final + cam_pos;
-			printf("final offset value:");
-			print(actual_offset_final);
-
-			camera_matrix = look_at(vec3(cam_pos.v[0], cam_pos.v[1], cam_pos.v[2]), look_at_target, view_up);
-			//camera_matrix = look_at(vec3(cam_pos.v[0], cam_pos.v[1], cam_pos.v[2]), look_at_target, vec3(0.0,1.0,0.0));
-
-			//initializing the orientation versor for our camera
-			//lets try the cross product of our two vectors in one versor
-			//vec3 testVector = cross()
-
-			//
-
-			
-			//mat4 R = rotate_y_deg(identity_mat4(), -cam_yaw);
-			//mat4 Rx = rotate_x_deg(identity_mat4(), -cam_pitch);
-			//mat4 view_mat = R  * T * init_view_matrix;
-			//mat4 view_mat = testMat * T;
-			//mat4 view_mat = finalRot * T;
-			mat4 view_mat = camera_matrix;
-			//print(view_mat);
-
-
-			//pass in updated values to entity vertex shader
-			glUseProgram(shader_program_VertexColourExample);
-			glUniformMatrix4fv(view_matrix_location, 1, GL_FALSE, view_mat.m);
-
-			//pass in updated values to ship vertex shader
-			glUseProgram(shader_program_ship);
-			glUniformMatrix4fv(ship_view_matrix_location, 1, GL_FALSE, view_mat.m);
-
-			//pass in updated values to skybox vertex shader
-			glUseProgram(skybox_program);
-			glUniformMatrix4fv(skybox_view_matrix_location, 1, GL_FALSE, view_mat.m);
-
-			
-		}
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		glDepthMask(GL_FALSE);
-		glUseProgram(skybox_program);
-		glUniform1i(tex_loc, 0);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
-		glBindVertexArray(vao_sky);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glDepthMask(GL_TRUE);
-
-
-
-		//updates the x component of the matrix in this case the 12th array position
-		//matrix[12] = elapsed_seconds * speed + last_position;
-		//last_position = matrix[12];
-		//rotation around x axis corresponds to 5,6,9 and 10 like this
-		//matrix[5] = cos(last_position* 180/3.14);
-		//matrix[6] = sin(last_position * 180 / 3.14);
-		//matrix[9] = -sin(last_position * 180 / 3.14);
-		//matrix[10] = cos(last_position * 180 / 3.14);
-
-
-		glUseProgram(shader_program_VertexColourExample);
-		glUniformMatrix4fv(matrix_location, 1, GL_FALSE, matrix);
-
-		//wipe the drawing surface clear	
-		
-
-		//glUseProgram(shader_program_purple);
-		//glBindVertexArray(vao);
-		////draw points 0-3 from the currently bound VAO with current in-use shader
-		//glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		//glUseProgram(shader_program_red);
-		//glBindVertexArray(vao2);
-		////draw points 0-3 from the currently bound VAO with current in-use shader
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
-
-		//glUseProgram(shader_program_blue);
-		//glBindVertexArray(vao3);
-		////draw points 0-3 from the currently bound VAO with current in-use shader
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
-
-		glUseProgram(shader_program_VertexColourExample);
-		glBindVertexArray(vao4);
-		glDrawArrays(GL_TRIANGLES, 0,12);
-
-		glUseProgram(shader_program_ship);
-		glUniformMatrix4fv(matrix_location2, 1, GL_FALSE, matrix2);
-		glBindVertexArray(vao5);
-		glDrawArrays(GL_TRIANGLES, 0, 30);
-
-
-		//update other events like the input handling
-		glfwPollEvents();
-		//put the stuff we've been drawing onto the display
-		glfwSwapBuffers(window);
-			
+		}	
 	}
 
 	glDeleteProgram(shader_program_purple);
