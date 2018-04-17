@@ -199,8 +199,8 @@ int main()
 
 	const GLubyte* renderer = glGetString(GL_RENDERER);
 	const GLubyte* version = glGetString(GL_VERSION);
-	printf("Renderer: %s\n", renderer);
-	printf("OpenGL version supported: %s\n", version);
+	//printf("Renderer: %s\n", renderer);
+	//printf("OpenGL version supported: %s\n", version);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -229,6 +229,10 @@ int main()
 	float enemy_ship_x = 0.0f;
 	float enemy_ship_y = 0.0f;
 
+	float asteroid_z = -4.0f;
+	float asteroid_x = 0.0f;
+	float asteroid_y = 0.0f;
+
 
 	//matrix for translation demo             //when using a 1d array as a 4x4 matrix this is the order of elements
 	float matrix[] = 
@@ -244,51 +248,59 @@ int main()
 		1.0f, 0.0f, 0.0f, 0.0f,									//0, 4,  8, 12,
 		0.0f, 1.0f, 0.0f, 0.0f,									//1, 5,  9, 13,
 		0.0f, 0.0f, 1.0f, 0.0f,									//2, 6, 10, 14,
-		enemy_ship_x, enemy_ship_y, enemy_ship_z, 1.0f									//3, 7, 11, 15,
+		enemy_ship_x, enemy_ship_y, enemy_ship_z, 1.0f			//3, 7, 11, 15,
+	};
+
+	float matrix3[] =
+	{
+		1.0f, 0.0f, 0.0f, 0.0f,									//0, 4,  8, 12,
+		0.0f, 1.0f, 0.0f, 0.0f,									//1, 5,  9, 13,
+		0.0f, 0.0f, 1.0f, 0.0f,									//2, 6, 10, 14,
+		asteroid_x, asteroid_y, asteroid_z, 1.0f				//3, 7, 11, 15,
 	};
 
 	float points_skybox[] = {
-		-10.0f,  10.0f, -10.0f,
-		-10.0f, -10.0f, -10.0f,
-		10.0f, -10.0f, -10.0f,
-		10.0f, -10.0f, -10.0f,
-		10.0f,  10.0f, -10.0f,
-		-10.0f,  10.0f, -10.0f,
+		-50.0f,  50.0f, -50.0f,
+		-50.0f, -50.0f, -50.0f,
+		50.0f, -50.0f, -50.0f,
+		50.0f, -50.0f, -50.0f,
+		50.0f,  50.0f, -50.0f,
+		-50.0f,  50.0f, -50.0f,
 
-		-10.0f, -10.0f,  10.0f,
-		-10.0f, -10.0f, -10.0f,
-		-10.0f,  10.0f, -10.0f,
-		-10.0f,  10.0f, -10.0f,
-		-10.0f,  10.0f,  10.0f,
-		-10.0f, -10.0f,  10.0f,
+		-50.0f, -50.0f,  50.0f,
+		-50.0f, -50.0f, -50.0f,
+		-50.0f,  50.0f, -50.0f,
+		-50.0f,  50.0f, -50.0f,
+		-50.0f,  50.0f,  50.0f,
+		-50.0f, -50.0f,  50.0f,
 
-		10.0f, -10.0f, -10.0f,
-		10.0f, -10.0f,  10.0f,
-		10.0f,  10.0f,  10.0f,
-		10.0f,  10.0f,  10.0f,
-		10.0f,  10.0f, -10.0f,
-		10.0f, -10.0f, -10.0f,
+		50.0f, -50.0f, -50.0f,
+		50.0f, -50.0f,  50.0f,
+		50.0f,  50.0f,  50.0f,
+		50.0f,  50.0f,  50.0f,
+		50.0f,  50.0f, -50.0f,
+		50.0f, -50.0f, -50.0f,
 
-		-10.0f, -10.0f,  10.0f,
-		-10.0f,  10.0f,  10.0f,
-		10.0f,  10.0f,  10.0f,
-		10.0f,  10.0f,  10.0f,
-		10.0f, -10.0f,  10.0f,
-		-10.0f, -10.0f,  10.0f,
+		-50.0f, -50.0f,  50.0f,
+		-50.0f,  50.0f,  50.0f,
+		50.0f,  50.0f,  50.0f,
+		50.0f,  50.0f,  50.0f,
+		50.0f, -50.0f,  50.0f,
+		-50.0f, -50.0f,  50.0f,
 
-		-10.0f,  10.0f, -10.0f,
-		10.0f,  10.0f, -10.0f,
-		10.0f,  10.0f,  10.0f,
-		10.0f,  10.0f,  10.0f,
-		-10.0f,  10.0f,  10.0f,
-		-10.0f,  10.0f, -10.0f,
+		-50.0f,  50.0f, -50.0f,
+		50.0f,  50.0f, -50.0f,
+		50.0f,  50.0f,  50.0f,
+		50.0f,  50.0f,  50.0f,
+		-50.0f,  50.0f,  50.0f,
+		-50.0f,  50.0f, -50.0f,
 
-		-10.0f, -10.0f, -10.0f,
-		-10.0f, -10.0f,  10.0f,
-		10.0f, -10.0f, -10.0f,
-		10.0f, -10.0f, -10.0f,
-		-10.0f, -10.0f,  10.0f,
-		10.0f, -10.0f,  10.0f
+		-50.0f, -50.0f, -50.0f,
+		-50.0f, -50.0f,  50.0f,
+		50.0f, -50.0f, -50.0f,
+		50.0f, -50.0f, -50.0f,
+		-50.0f, -50.0f,  50.0f,
+		50.0f, -50.0f,  50.0f
 	};
 	GLuint vbo_sky;
 	glGenBuffers(1, &vbo_sky);
@@ -680,6 +692,32 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(0);
 
+	//sixth? VAO a square to draw our ship
+	GLfloat asteroidPoints[] =
+	{
+		-0.5f,0.0f,0.0f,
+		0.5f,0.0f,0.0f,
+		0.5f,0.5f,0.0f
+
+
+	};
+
+	//create a vertex buffer object(vbo) to pass on our positions array to the GPU (Define vertex colours example)
+	GLuint asteroid_vbo = 0;
+	glGenBuffers(1, &asteroid_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, asteroid_vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(asteroidPoints), asteroidPoints, GL_STATIC_DRAW);
+
+	//create a vertex attribute object(VAO) so that we dont have to bind each vertex buffer object every time we draw a mesh.
+	//VAO remembers all the vertex buffers that you want and the memory layout of each one. 
+	//Set up the VAO once per mesh and bind it before every mesh you want to draw.
+	GLuint vao6 = 0;
+	glGenVertexArrays(1, &vao6);
+	glBindVertexArray(vao6);
+	glBindBuffer(GL_ARRAY_BUFFER, asteroid_vbo);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(0);
+
 
 
 	//skybox shader
@@ -842,6 +880,37 @@ int main()
 	int matrix_location2 = glGetUniformLocation(shader_program_ship, "matrix");
 
 	glUniformMatrix4fv(matrix_location2, 1, GL_FALSE, matrix2);
+
+
+	//sixth SHADER asteroid
+	//parse vertex shader from external file
+	std::string vertex_source6 = ParseShader("asteroid.vert");
+	const GLchar * vertex_shader6 = (const GLchar *)vertex_source6.c_str();
+
+	//parse fragment shader from external file
+	std::string fragment_source6 = ParseShader("test.frag");
+	const GLchar * fragment_shader6 = (const GLchar *)fragment_source6.c_str();
+
+	//compile the vertex shader
+	GLuint vs6 = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vs6, 1, &vertex_shader6, NULL);
+	glCompileShader(vs6);
+
+	//compile the fragment shader
+	GLuint fs6 = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fs6, 1, &fragment_shader6, NULL);
+	glCompileShader(fs6);
+
+	//using both the compiled vertex shader and compiled fragment shader we create a single, executable GPU shader program
+	GLuint shader_program_asteroid = glCreateProgram();
+	glAttachShader(shader_program_asteroid, vs6);
+	glAttachShader(shader_program_asteroid, fs6);
+	glLinkProgram(shader_program_asteroid);
+
+	//set matrix to uniform matrix in shader
+	glUseProgram(shader_program_asteroid);
+	int matrix_location3 = glGetUniformLocation(shader_program_asteroid, "matrix");
+	glUniformMatrix4fv(matrix_location3, 1, GL_FALSE, matrix3);
 
 
 
@@ -1149,6 +1218,17 @@ int main()
 	glUseProgram(shader_program_ship);
 	glUniformMatrix4fv(ship_projection_matrix_location, 1, GL_FALSE, proj_mat);
 
+	//intialize the values of our projection and view matrices in the asteroid vertex shader
+	int asteroid_view_matrix_location = glGetUniformLocation(shader_program_asteroid, "view");
+	glUseProgram(shader_program_asteroid);
+	glUniformMatrix4fv(asteroid_view_matrix_location, 1, GL_FALSE, view_mat.m);
+	int asteroid_projection_matrix_location = glGetUniformLocation(shader_program_asteroid, "proj");
+	glUseProgram(shader_program_asteroid);
+	glUniformMatrix4fv(asteroid_projection_matrix_location, 1, GL_FALSE, proj_mat);
+
+
+
+
 
 
 	//intialize the values of our projection and view matrices in the entity vertex shader
@@ -1179,6 +1259,7 @@ int main()
 	double mouseYDisplacement = 0;
 
 	bool is_firing = false;
+	int player_money = 0;
 
 	GLuint skybox = 0;
 
@@ -1331,18 +1412,20 @@ int main()
 				}
 				*/
 
+
+				//calculate the total speed in z and x axis to limit ship rotation speed 
 				float total_speed = (cam_speed_x*1.5) + cam_speed_z;
 
 				if (total_speed < 0.1f)
 				{
-					total_speed = 3;
+					total_speed = 2;
 				}
 				else
 				{
 					total_speed = 30 / total_speed;
 				}
 
-				printf("%f\n", total_speed);
+				//printf("%f\n", total_speed);
 
 				if (mouseXDisplacement > 0.0)
 				{
@@ -1458,15 +1541,19 @@ int main()
 						bool test_collision = solveQuadratic(a, b, c, t0, t1);
 						if (test_collision)
 						{
-							printf("Hit\n");
+							//printf("Hit\n");
 							enemies[i].hp -= 5;
 							if (enemies[i].hp <= 0)
 							{
+								player_money += 5;
+								printf("Enemy destroyed! %d enemies left!\n", enemiesLeft - 1);
+								printf("You gained 5$! You have:%d$\n", player_money);
 								for (int n = i; n < enemiesLeft-1; n++)
 								{
 									enemies[n] = enemies[n + 1];
 								}
 								enemiesLeft--;
+								
 							//enemies[i] = enemies[enemiesLeft - i];
 							//enemiesLeft--;
 							}
@@ -1535,12 +1622,12 @@ int main()
 
 					rotate_vector_by_quaternion(actual_offset, result_quat, actual_offset_final);
 					actual_offset_final = normalise(actual_offset_final);
-					printf("test forward vec\n");
-					print(actual_offset_final);
+					//printf("test forward vec\n");
+					//print(actual_offset_final);
 
 					//rotate_vector_by_quaternion(actual_offset_result, quat_pitch, actual_offset_final);
 
-					printf("result of second quaternion applied to offset: x:%f y:%f z:%f angle used:%f\n", actual_offset_final.v[0], actual_offset_final.v[1], actual_offset_final.v[2], cam_pitch);
+					//printf("result of second quaternion applied to offset: x:%f y:%f z:%f angle used:%f\n", actual_offset_final.v[0], actual_offset_final.v[1], actual_offset_final.v[2], cam_pitch);
 
 					view_forward = actual_offset_final;
 
@@ -1568,14 +1655,14 @@ int main()
 					//print(view_forward);
 					//printf("right vector:");
 					//print(view_right);
-					printf("up vector:");
-					print(view_up);
-					printf("-----------------------------------------------------------------\n");
+				//	printf("up vector:");
+				//	print(view_up);
+				//	printf("-----------------------------------------------------------------\n");
 
 					//vec3 look_at_target = actual_offset_result + cam_pos;
 					vec3 look_at_target = actual_offset_final + cam_pos;
-					printf("final offset value:");
-					print(actual_offset_final);
+				//	printf("final offset value:");
+				//	print(actual_offset_final);
 
 					camera_matrix = look_at(vec3(cam_pos.v[0], cam_pos.v[1], cam_pos.v[2]), look_at_target, view_up);
 					//camera_matrix = look_at(vec3(cam_pos.v[0], cam_pos.v[1], cam_pos.v[2]), look_at_target, vec3(0.0,1.0,0.0));
@@ -1603,6 +1690,10 @@ int main()
 					//pass in updated values to ship vertex shader
 					glUseProgram(shader_program_ship);
 					glUniformMatrix4fv(ship_view_matrix_location, 1, GL_FALSE, view_mat.m);
+
+					//pass in updated values to asteroid vertex shader
+					glUseProgram(shader_program_asteroid);
+					glUniformMatrix4fv(asteroid_view_matrix_location, 1, GL_FALSE, view_mat.m);
 
 					//pass in updated values to skybox vertex shader
 					glUseProgram(skybox_program);
@@ -1685,6 +1776,15 @@ int main()
 					glBindVertexArray(vao5);
 					glDrawArrays(GL_TRIANGLES, 0, 132);
 				}
+
+
+				//draw asteroids here
+				glUseProgram(shader_program_asteroid);
+				glUniformMatrix4fv(matrix_location3, 1, GL_FALSE, matrix3);
+				glBindVertexArray(vao6);
+				glDrawArrays(GL_TRIANGLES, 0, 3);
+
+
 
 				if (is_firing)
 				{

@@ -127,6 +127,7 @@
     <ClCompile Include="maths_funcs.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="asteroid.vert" />
     <None Include="ship_shader.frag" />
     <None Include="ship_shader.vert" />
     <None Include="skybox_shader.frag" />

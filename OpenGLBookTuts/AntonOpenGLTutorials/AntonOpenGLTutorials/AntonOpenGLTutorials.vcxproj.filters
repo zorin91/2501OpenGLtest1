@@ -59,6 +59,9 @@
     <None Include="ship_shader.vert">
       <Filter>shaders</Filter>
     </None>
+    <None Include="asteroid.vert">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="maths_funcs.h">
