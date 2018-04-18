@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <fstream>
 #include <iostream>
+#include <istream>
 #include <string>
 #include <sstream>
 #include <time.h>
@@ -184,7 +185,8 @@ int main()
 	GLFWmonitor* mon = glfwGetPrimaryMonitor();
 	const GLFWvidmode* vmode = glfwGetVideoMode(mon);
 	
-	GLFWwindow* window = glfwCreateWindow(vmode->width , vmode->height , "Hello Triangle", mon, NULL);
+	//switch first NuLL to mon to go to fullscreen and vice versa
+	GLFWwindow* window = glfwCreateWindow(vmode->width/2 , vmode->height/2 , "Hello Triangle", NULL, NULL);
 	if (!window)
 	{
 		fprintf(stderr, "Error: could not open a window\n");
@@ -253,9 +255,9 @@ int main()
 
 	float matrix3[] =
 	{
-		1.0f, 0.0f, 0.0f, 0.0f,									//0, 4,  8, 12,
-		0.0f, 1.0f, 0.0f, 0.0f,									//1, 5,  9, 13,
-		0.0f, 0.0f, 1.0f, 0.0f,									//2, 6, 10, 14,
+		6.0f, 0.0f, 0.0f, 0.0f,									//0, 4,  8, 12,
+		0.0f, 6.0f, 0.0f, 0.0f,									//1, 5,  9, 13,
+		0.0f, 0.0f, 6.0f, 0.0f,									//2, 6, 10, 14,
 		asteroid_x, asteroid_y, asteroid_z, 1.0f				//3, 7, 11, 15,
 	};
 
@@ -382,7 +384,7 @@ int main()
 	{
 		-0.01f,  -1.0f, 0.0f,
 	   0.01f,  -1.0f, 0.0f,
-		0.0f,  0.0f, -1.0f
+		0.0f,  0.2f, -1.0f
 	};
 
 	//create a vertex buffer object(vbo) to pass on our positions array to the GPU 
@@ -692,12 +694,47 @@ int main()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(0);
 
+
+	int asteroid_vertice_count = 24;
 	//sixth? VAO a square to draw our ship
 	GLfloat asteroidPoints[] =
 	{
-		-0.5f,0.0f,0.0f,
-		0.5f,0.0f,0.0f,
-		0.5f,0.5f,0.0f
+		//left side
+		0.0f,0.0f,1.0f,
+		0.0f,1.0f,0.0f,
+		-1.0f,0.0f,0.0f,
+
+		-1.0f,0.0f,0.0f,
+		0.0f,1.0f,0.0f,
+		0.0f,0.0f,-1.0f,
+
+		0.0f,0.0f,-1.0f,
+		-1.0f,0.0f,0.0f,
+		0.0f,-1.0f,0.0f,
+
+		0.0f,-1.0f,0.0f,
+		0.0f,0.0f,1.0f,
+		-1.0f,0.0f,0.0f,
+
+		//right side
+		0.0f,0.0f,1.0f,
+		0.0f,1.0f,0.0f,
+		1.0f,0.0f,0.0f,
+
+		1.0f,0.0f,0.0f,
+		0.0f,1.0f,0.0f,
+		0.0f,0.0f,-1.0f,
+
+		0.0f,0.0f,-1.0f,
+		1.0f,0.0f,0.0f,
+		0.0f,-1.0f,0.0f,
+
+		0.0f,-1.0f,0.0f,
+		0.0f,0.0f,1.0f,
+		1.0f,0.0f,0.0f,
+
+
+
 
 
 	};
@@ -1260,6 +1297,8 @@ int main()
 
 	bool is_firing = false;
 	int player_money = 0;
+	int wave_number = 1;
+	bool has_turning_upgrade = false;
 
 	GLuint skybox = 0;
 
@@ -1418,7 +1457,7 @@ int main()
 
 				if (total_speed < 0.1f)
 				{
-					total_speed = 2;
+					total_speed = 5;
 				}
 				else
 				{
@@ -1553,6 +1592,7 @@ int main()
 									enemies[n] = enemies[n + 1];
 								}
 								enemiesLeft--;
+
 								
 							//enemies[i] = enemies[enemiesLeft - i];
 							//enemiesLeft--;
@@ -1563,8 +1603,17 @@ int main()
 				}
 
 
+				//we update our x and z position based on speed
 				cam_pos += view_forward * cam_speed_z * elapsed_seconds;
 				cam_pos += view_right * cam_speed_x * elapsed_seconds;
+
+				//check to see if wave cleared
+				if (enemiesLeft == 0)
+				{
+					wave_number++;
+					cam_pos = { 0.0f, 0.0f, 2.0f };
+					gamestate = SHOP;
+				}
 				
 				//we update/recalculate our view matrix if one of the previous keys were pressed
 				//if (cam_moved)
@@ -1782,7 +1831,7 @@ int main()
 				glUseProgram(shader_program_asteroid);
 				glUniformMatrix4fv(matrix_location3, 1, GL_FALSE, matrix3);
 				glBindVertexArray(vao6);
-				glDrawArrays(GL_TRIANGLES, 0, 3);
+				glDrawArrays(GL_TRIANGLES, 0, asteroid_vertice_count);
 
 
 
@@ -1802,7 +1851,51 @@ int main()
 			}
 			case SHOP:
 			{
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				system("cls");
+				printf("Wave cleared! You are now on wave %d.\n", wave_number);
+				printf("Welcome to the shop!\n");
+				printf("Press q at any time to start the next wave!\n");
+				if(!has_turning_upgrade)
+				{ 
+				printf("\nPress 1 to buy turning speed power up! Cost: 30$\n");
+				}
+				else
+				{
+					printf("To use the turning upgrade press f while in combat to activate the ability. Be careful it only lasts a few seconds!\n");
+				}
+				//create escape key
+				if (GLFW_PRESS == glfwGetKey(window, GLFW_KEY_ESCAPE)) {
+					glfwSetWindowShouldClose(window, 1);
+				}
+				if (glfwGetKey(window, GLFW_KEY_1))
+				{
+					if (!has_turning_upgrade)
+					{
+						if (player_money < 30)
+						{
+							printf("You dont have enough for this upgrade!\n");
+						}
+						else
+						{
+							player_money -= 30;
+							has_turning_upgrade = true;
+						}
+					}
+					
+				}
+				if (glfwGetKey(window, GLFW_KEY_Q))
+				{
+					
+					for (int i = 0; i < 10; i++)
+					{
+						initEnemy(enemies[i]);
+					}
+					enemiesLeft = 10;
+					gamestate = GAMEPLAY;
+					system("cls");
+				}
+
+				//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 				glfwPollEvents();
 				glfwSwapBuffers(window);
 				break;
