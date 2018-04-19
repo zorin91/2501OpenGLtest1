@@ -262,47 +262,47 @@ int main()
 	};
 
 	float points_skybox[] = {
-		-50.0f,  50.0f, -50.0f,
-		-50.0f, -50.0f, -50.0f,
-		50.0f, -50.0f, -50.0f,
-		50.0f, -50.0f, -50.0f,
-		50.0f,  50.0f, -50.0f,
-		-50.0f,  50.0f, -50.0f,
+		-100.0f,  100.0f, -100.0f,
+		-100.0f, -100.0f, -100.0f,
+		100.0f, -100.0f, -100.0f,
+		100.0f, -100.0f, -100.0f,
+		100.0f,  100.0f, -100.0f,
+		-100.0f,  100.0f, -100.0f,
 
-		-50.0f, -50.0f,  50.0f,
-		-50.0f, -50.0f, -50.0f,
-		-50.0f,  50.0f, -50.0f,
-		-50.0f,  50.0f, -50.0f,
-		-50.0f,  50.0f,  50.0f,
-		-50.0f, -50.0f,  50.0f,
+		-100.0f, -100.0f,  100.0f,
+		-100.0f, -100.0f, -100.0f,
+		-100.0f,  100.0f, -100.0f,
+		-100.0f,  100.0f, -100.0f,
+		-100.0f,  100.0f,  100.0f,
+		-100.0f, -100.0f,  100.0f,
 
-		50.0f, -50.0f, -50.0f,
-		50.0f, -50.0f,  50.0f,
-		50.0f,  50.0f,  50.0f,
-		50.0f,  50.0f,  50.0f,
-		50.0f,  50.0f, -50.0f,
-		50.0f, -50.0f, -50.0f,
+		100.0f, -100.0f, -100.0f,
+		100.0f, -100.0f,  100.0f,
+		100.0f,  100.0f,  100.0f,
+		100.0f,  100.0f,  100.0f,
+		100.0f,  100.0f, -100.0f,
+		100.0f, -100.0f, -100.0f,
 
-		-50.0f, -50.0f,  50.0f,
-		-50.0f,  50.0f,  50.0f,
-		50.0f,  50.0f,  50.0f,
-		50.0f,  50.0f,  50.0f,
-		50.0f, -50.0f,  50.0f,
-		-50.0f, -50.0f,  50.0f,
+		-100.0f, -100.0f,  100.0f,
+		-100.0f,  100.0f,  100.0f,
+		100.0f,  100.0f,  100.0f,
+		100.0f,  100.0f,  100.0f,
+		100.0f, -100.0f,  100.0f,
+		-100.0f, -100.0f,  100.0f,
 
-		-50.0f,  50.0f, -50.0f,
-		50.0f,  50.0f, -50.0f,
-		50.0f,  50.0f,  50.0f,
-		50.0f,  50.0f,  50.0f,
-		-50.0f,  50.0f,  50.0f,
-		-50.0f,  50.0f, -50.0f,
+		-100.0f,  100.0f, -100.0f,
+		100.0f,  100.0f, -100.0f,
+		100.0f,  100.0f,  100.0f,
+		100.0f,  100.0f,  100.0f,
+		-100.0f,  100.0f,  100.0f,
+		-100.0f,  100.0f, -100.0f,
 
-		-50.0f, -50.0f, -50.0f,
-		-50.0f, -50.0f,  50.0f,
-		50.0f, -50.0f, -50.0f,
-		50.0f, -50.0f, -50.0f,
-		-50.0f, -50.0f,  50.0f,
-		50.0f, -50.0f,  50.0f
+		-100.0f, -100.0f, -100.0f,
+		-100.0f, -100.0f,  100.0f,
+		100.0f, -100.0f, -100.0f,
+		100.0f, -100.0f, -100.0f,
+		-100.0f, -100.0f,  100.0f,
+		100.0f, -100.0f,  100.0f
 	};
 	GLuint vbo_sky;
 	glGenBuffers(1, &vbo_sky);
@@ -384,7 +384,7 @@ int main()
 	{
 		-0.01f,  -1.0f, 0.0f,
 	   0.01f,  -1.0f, 0.0f,
-		0.0f,  0.2f, -1.0f
+		0.0f,  0.12f, -1.0f
 	};
 
 	//create a vertex buffer object(vbo) to pass on our positions array to the GPU 
@@ -1047,7 +1047,7 @@ int main()
 
 	//creating perspective view
 	float near = 0.1f; //near clipping plane distance
-	float far = 100.0f; //far clipping plane distance
+	float far = 300.0f; //far clipping plane distance
 	float fov = 67.0f * ONE_DEG_IN_RAD; // 67 is a good default for fov, then convert degree to rad
 	float aspect = (float)vmode->width / (float)vmode->height;
 		
@@ -1298,7 +1298,10 @@ int main()
 	bool is_firing = false;
 	int player_money = 0;
 	int wave_number = 1;
+	double boost_activation_time = 0.0;
+	double boost_duration_time = 0.0;
 	bool has_turning_upgrade = false;
+	bool is_speed_boost_active = false;
 
 	GLuint skybox = 0;
 
@@ -1374,40 +1377,104 @@ int main()
 				//code for moving camera, we use a bool here and change the view matrix after checking all input in case we press multiple buttons
 
 				bool cam_moved = false;
+				if (glfwGetKey(window, GLFW_KEY_F))
+				{
+					if (!is_speed_boost_active)
+					{
+						is_speed_boost_active = true;
+						boost_activation_time = glfwGetTime();
+						boost_duration_time = boost_activation_time + 5.0;
+
+					}
+				}
+
+				if (is_speed_boost_active)
+				{
+					boost_activation_time = glfwGetTime();
+					if (boost_activation_time > boost_duration_time)
+					{
+						is_speed_boost_active = false;
+					}
+				}
+
 				if (glfwGetKey(window, GLFW_KEY_A))
 				{
-					//cam_pos -= view_right *  cam_speed * elapsed_seconds;
+					if (is_speed_boost_active)
+					{
+						cam_speed_x -= 0.21;
+						cam_moved = true;
+					}
+					else
+					{ 
 					cam_speed_x -= 0.07;
 					cam_moved = true;
+					}
 				}
 				if (glfwGetKey(window, GLFW_KEY_D))
 				{
-					//cam_pos += view_right *  cam_speed * elapsed_seconds;
-					cam_speed_x += 0.07;
-					cam_moved = true;
+					if (is_speed_boost_active)
+					{
+						cam_speed_x += 0.21;
+						cam_moved = true;
+					}
+					else
+					{
+						cam_speed_x += 0.07;
+						cam_moved = true;
+					}
 				}
 				if (glfwGetKey(window, GLFW_KEY_Q))
 				{
-					cam_pos += view_up * cam_speed_y * elapsed_seconds;
-					cam_moved = true;
+					if (is_speed_boost_active)
+					{
+						cam_pos += view_up * cam_speed_y * elapsed_seconds * 3;
+						cam_moved = true;
+					}
+					else
+					{
+						cam_pos += view_up * cam_speed_y * elapsed_seconds;
+						cam_moved = true;
+					}
 				}
 				if (glfwGetKey(window, GLFW_KEY_E))
 				{
-					cam_pos -= view_up * cam_speed_y * elapsed_seconds;
-					cam_moved = true;
+					if (is_speed_boost_active)
+					{
+						cam_pos -= view_up * cam_speed_y * elapsed_seconds * 3;
+						cam_moved = true;
+					}
+					else
+					{
+						cam_pos -= view_up * cam_speed_y * elapsed_seconds;
+						cam_moved = true;
+					}
 				}
 				if (glfwGetKey(window, GLFW_KEY_W))
 				{
-					//cam_pos += view_forward * cam_speed * elapsed_seconds;
+					if (is_speed_boost_active)
+					{
+						cam_speed_z += 0.3;
+						cam_moved = true;
+					}
+					else
+					{ 
 					cam_speed_z += 0.1;
 					cam_moved = true;
+					}
 				}
 				if (glfwGetKey(window, GLFW_KEY_S))
 				{
 
-					cam_speed_z -= 0.1;
-					//cam_pos -= view_forward * cam_speed * elapsed_seconds;
-					cam_moved = true;
+					if (is_speed_boost_active)
+					{
+						cam_speed_z -= 0.3;
+						cam_moved = true;
+					}
+					else
+					{
+						cam_speed_z -= 0.1;
+						cam_moved = true;
+					}
 				}
 				if (glfwGetKey(window, GLFW_KEY_X))
 				{
@@ -1453,7 +1520,7 @@ int main()
 
 
 				//calculate the total speed in z and x axis to limit ship rotation speed 
-				float total_speed = (cam_speed_x*1.5) + cam_speed_z;
+				float total_speed = (abs(cam_speed_x)*1.5) + abs(cam_speed_z);
 
 				if (total_speed < 0.1f)
 				{
@@ -1608,12 +1675,7 @@ int main()
 				cam_pos += view_right * cam_speed_x * elapsed_seconds;
 
 				//check to see if wave cleared
-				if (enemiesLeft == 0)
-				{
-					wave_number++;
-					cam_pos = { 0.0f, 0.0f, 2.0f };
-					gamestate = SHOP;
-				}
+				
 				
 				//we update/recalculate our view matrix if one of the previous keys were pressed
 				//if (cam_moved)
@@ -1753,6 +1815,7 @@ int main()
 
 				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+				
 				glDepthMask(GL_FALSE);
 				glUseProgram(skybox_program);
 				glUniform1i(tex_loc, 0);
@@ -1843,6 +1906,13 @@ int main()
 					is_firing = false;
 				}
 
+				if (enemiesLeft == 0)
+				{
+					wave_number++;
+					cam_pos = { 0.0f, 0.0f, 2.0f };
+					gamestate = SHOP;
+				}
+
 				//update other events like the input handling
 				glfwPollEvents();
 				//put the stuff we've been drawing onto the display
@@ -1857,7 +1927,7 @@ int main()
 				printf("Press q at any time to start the next wave!\n");
 				if(!has_turning_upgrade)
 				{ 
-				printf("\nPress 1 to buy turning speed power up! Cost: 30$\n");
+				printf("\nPress 1 to buy speed power up! Cost: 30$\n");
 				}
 				else
 				{
@@ -1897,7 +1967,7 @@ int main()
 
 				//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 				glfwPollEvents();
-				glfwSwapBuffers(window);
+			//	glfwSwapBuffers(window);
 				break;
 			}
 		}	

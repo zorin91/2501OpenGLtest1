@@ -5,22 +5,28 @@ c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\an
 c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(157): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(163): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1051): warning C4305: 'initializing': truncation from 'double' to 'float'
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1380): warning C4305: '-=': truncation from 'double' to 'float'
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1386): warning C4305: '+=': truncation from 'double' to 'float'
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1391): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1396): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1402): warning C4305: '+=': truncation from 'double' to 'float'
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1408): warning C4305: '-=': truncation from 'double' to 'float'
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1416): warning C4305: '-=': truncation from 'double' to 'float'
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1420): warning C4305: '+=': truncation from 'double' to 'float'
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1429): warning C4305: '-=': truncation from 'double' to 'float'
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1433): warning C4305: '+=': truncation from 'double' to 'float'
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1456): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1475): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1490): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1504): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1523): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1607): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1608): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1404): warning C4305: '-=': truncation from 'double' to 'float'
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1409): warning C4305: '-=': truncation from 'double' to 'float'
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1417): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1422): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1430): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1435): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1443): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1448): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1456): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1461): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1470): warning C4305: '-=': truncation from 'double' to 'float'
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1475): warning C4305: '-=': truncation from 'double' to 'float'
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1483): warning C4305: '-=': truncation from 'double' to 'float'
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1487): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1496): warning C4305: '-=': truncation from 'double' to 'float'
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1500): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1523): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1542): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1557): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1571): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1590): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1674): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\alex\documents\github\2501opengl\openglbooktuts\antonopengltutorials\antonopengltutorials\main.cpp(1675): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   AntonOpenGLTutorials.vcxproj -> C:\Users\Alex\Documents\GitHub\2501OpenGL\OpenGLBookTuts\AntonOpenGLTutorials\Debug\AntonOpenGLTutorials.exe
   AntonOpenGLTutorials.vcxproj -> C:\Users\Alex\Documents\GitHub\2501OpenGL\OpenGLBookTuts\AntonOpenGLTutorials\Debug\AntonOpenGLTutorials.pdb (Partial PDB)
